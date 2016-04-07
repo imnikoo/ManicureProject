@@ -1,0 +1,53 @@
+﻿<div layout="row" layout-sm="column" layout-align="space-around" ng-show="!pageIsLoaded">
+    <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+</div>
+<div ng-show="pageIsLoaded">
+    <md-content layout="row">
+        <div flex="">
+            <md-card>
+                <form name="clientForm">
+                    <md-input-container class="md-block">
+                        <label>Имя</label>
+                        <input required name="name" ng-model="client.name">
+                        <div ng-messages="clientForm.name.$error">
+                            <div ng-message="required">
+                                Введи <b>имя клиента</b>
+                            </div>
+                        </div>
+                    </md-input-container>
+
+                    <md-autocomplete md-selected-item="client.city"
+                                     md-search-text="searchCity"
+                                     md-items="city in querySearch(searchCity)"
+                                     md-item-text="city.title" md-min-length="0"
+                                     placeholder="">
+                        <md-item-template>
+                            <span md-highlight-text="searchCity" md-highlight-flags="^i">{{city.title}}</span>
+                        </md-item-template>
+                        <md-not-found>
+                            Города "{{searchCategory}}" нет еще.
+                            <a ng-click="">Клик, чтобы создать!</a>
+                        </md-not-found>
+                    </md-autocomplete>
+                    <md-input-container class="md-block">
+                        <label>Номер новой почты</label>
+                        <input name="mailNumber" ng-model="client.mailNumber">
+                    </md-input-container>
+                    <md-input-container class="md-block">
+                        <label>Источник</label>
+                        <input name="source" ng-model="client.source">
+                    </md-input-container>
+                    <md-input-container class="md-block">
+                        <label>Дополнительная информация</label>
+                        <textarea name="additionalInformation" ng-model="client.additionalInformation" md-maxlength="150" rows="5" md-select-on-focus=""></textarea>
+                    </md-input-container>
+                    <md-button class="md-primary md-raised" ng-disabled="!itemForm.$valid" ng-click="saveClientAndBack()">
+                        Сохранить и выйти
+                    </md-button>
+                    <md-button class="md-primary md-raised" ng-click="checkAndWarn($event)">
+                        Назад
+                    </md-button>
+                </form>
+            </md-card>
+        </div>
+</div>

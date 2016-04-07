@@ -1,0 +1,11 @@
+﻿item-details {
+    width : 500px
+}
+
+.search-container .md-errors-spacer {
+    min-height: 0 !important;
+}
+
+.order-label {
+    width: 100px !important;
+}

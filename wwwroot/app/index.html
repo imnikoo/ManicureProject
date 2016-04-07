@@ -1,0 +1,42 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <base href="" />
+    <script>
+        var baseUrl = window.location.port ? getBaseUrlWithPort() : getBaseUrlWithoutPort();
+        document.getElementsByTagName('base')[0].setAttribute('href', baseUrl);
+
+        function getBaseUrlWithPort() {
+            return window.location.protocol + '//' + window.location.hostname + ':' + window.location.port + '/';
+        }
+
+        function getBaseUrlWithoutPort() {
+            return window.location.protocol + '//' + window.location.hostname + '/';
+        }
+    </script>
+</head>
+<body ng-app="Manicure">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <md-button ui-sref="home">
+                Домашная
+            </md-button>
+            <md-button ui-sref="clients">
+                Клиенты
+            </md-button>
+            <md-button ui-sref="items">
+                Предметы
+            </md-button>
+            <md-button ui-sref="orders">
+                Заказы
+            </md-button>
+        </div>
+    </md-toolbar>
+    <div ui-view class="main-view"></div>
+    <!-- Some kind of magic for webpack assets-->
+    {% for (var chunk in o.htmlWebpackPlugin.assets) { %}
+    <script src="{%=o.htmlWebpackPlugin.assets[chunk]%}"></script>
+    {% } %}
+</body>
+</html>
