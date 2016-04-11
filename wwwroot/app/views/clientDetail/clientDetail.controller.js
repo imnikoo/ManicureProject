@@ -33,12 +33,12 @@ export default function ClientController($state, $scope, $stateParams, $mdDialog
 
     vm.showConfirm = function(ev) {
         var confirm = $mdDialog.confirm()
-              .title('Э')
-              .textContent('Вы изменили клиента и выходите. Выйти без сохранения?')
-              .ariaLabel('Ди?')
+              .title('РџСЂРµС‚')
+              .textContent('Р’С‹ РёР·РјРµРЅРёР»Рё РєР»РёРµРЅС‚Р° Рё РІС‹С…РѕРґРёС‚Рµ. Р’С‹Р№С‚Рё?')
+              .ariaLabel('РћРѕРѕРѕ..')
               .targetEvent(ev)
-              .ok('Выйти')
-              .cancel('Отмена');
+              .ok('Р’С‹Р№С‚Рё')
+              .cancel('РћС‚РјРµРЅР°');
 
         $mdDialog.show(confirm).then(function() {
             $state.go('clients');

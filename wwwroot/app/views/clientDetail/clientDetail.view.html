@@ -1,4 +1,4 @@
-﻿<div layout="row" layout-sm="column" layout-align="space-around" ng-show="!pageIsLoaded">
+<div layout="row" layout-sm="column" layout-align="space-around" ng-show="!pageIsLoaded">
     <md-progress-circular md-mode="indeterminate"></md-progress-circular>
 </div>
 <div ng-show="pageIsLoaded">
@@ -29,6 +29,14 @@
                             <a ng-click="">Клик, чтобы создать!</a>
                         </md-not-found>
                     </md-autocomplete>
+                    <md-input-container class="md-block" >
+                        <label>Телефон</label>
+                        <input required name="phoneNumber" ng-model="client.phoneNumber" ng-pattern="/\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/">
+                        <div class="hint" ng-show="showHints">+3##########</div>
+                        <div ng-messages="clientForm.phoneNumber.$error" ng-hide="showHints">
+                            <div ng-message="pattern">+3########## - Please enter a valid phone number.</div>
+                        </div>
+                    </md-input-container>
                     <md-input-container class="md-block">
                         <label>Номер новой почты</label>
                         <input name="mailNumber" ng-model="client.mailNumber">
@@ -41,7 +49,7 @@
                         <label>Дополнительная информация</label>
                         <textarea name="additionalInformation" ng-model="client.additionalInformation" md-maxlength="150" rows="5" md-select-on-focus=""></textarea>
                     </md-input-container>
-                    <md-button class="md-primary md-raised" ng-disabled="!itemForm.$valid" ng-click="saveClientAndBack()">
+                    <md-button class="md-primary md-raised" ng-disabled="!clientForm.$valid" ng-click="saveClientAndBack()">
                         Сохранить и выйти
                     </md-button>
                     <md-button class="md-primary md-raised" ng-click="checkAndWarn($event)">

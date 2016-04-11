@@ -9,7 +9,7 @@ var path = require('path'),
 module.exports = {
    entry: path.join(srcPath, 'main.js'),
    output: {
-      path: path.join(rootPath),
+      path: buildPath,
       filename: 'bundle.js'
    },
    eslint: {
