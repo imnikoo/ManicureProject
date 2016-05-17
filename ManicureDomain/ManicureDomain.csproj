@@ -40,30 +40,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Abstract\ICategoryRepository.cs" />
-    <Compile Include="Abstract\ICityRepository.cs" />
-    <Compile Include="Abstract\IClientRepository.cs" />
-    <Compile Include="Abstract\IExtendedRepository.cs" />
-    <Compile Include="Abstract\IItemRepository.cs" />
-    <Compile Include="Abstract\IOrderRepository.cs" />
-    <Compile Include="Abstract\IPurchasePlaceRepository.cs" />
-    <Compile Include="Abstract\IPurchaseRepository.cs" />
     <Compile Include="Abstract\IRepository.cs" />
     <Compile Include="Data\Storage.cs" />
-    <Compile Include="DummyRepos\DummyCategoryRepository.cs" />
-    <Compile Include="DummyRepos\DummyCityRepository.cs" />
-    <Compile Include="DummyRepos\DummyClientRepository.cs" />
-    <Compile Include="DummyRepos\DummyExtendedRepository.cs" />
-    <Compile Include="DummyRepos\DummyItemRepository.cs" />
-    <Compile Include="DummyRepos\DummyOrderRepository.cs" />
-    <Compile Include="DummyRepos\DummyPurchasePlaceRepository.cs" />
-    <Compile Include="DummyRepos\DummyRepository.cs" />
-    <Compile Include="Entities\Category.cs" />
-    <Compile Include="Entities\City.cs" />
+    <Compile Include="Entities\Setups\Category.cs" />
+    <Compile Include="Entities\Setups\City.cs" />
     <Compile Include="Entities\Client.cs" />
     <Compile Include="Entities\Entity.cs" />
     <Compile Include="Entities\Enums\OrderState.cs" />
-    <Compile Include="Entities\ExtendedEntity.cs" />
     <Compile Include="Entities\Item.cs" />
     <Compile Include="Entities\Order.cs" />
     <Compile Include="Entities\OrderItem.cs" />
@@ -71,7 +54,9 @@
     <Compile Include="Entities\PurchasePlace.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="DummyRepos\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

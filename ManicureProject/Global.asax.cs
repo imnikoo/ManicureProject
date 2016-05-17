@@ -12,6 +12,7 @@ namespace ManicureProject
         protected void Application_Start()
         {
             GlobalConfiguration.Configure(WebApiConfig.Register);
+            AutofacDependencyConfiguration.Initialize(GlobalConfiguration.Configuration);
         }
     }
 }

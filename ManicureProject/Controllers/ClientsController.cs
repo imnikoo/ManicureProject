@@ -1,5 +1,5 @@
-﻿using ManicureDomain.Abstract;
-using ManicureDomain.DummyRepos;
+﻿using Data.EntityFramework.Infrastructure;
+using ManicureDomain.Abstract;
 using ManicureDomain.Entities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -13,35 +13,29 @@ using System.Web.Http;
 
 namespace ManicureProject.Controllers
 {
-    public class ClientsController : ApiController
+    public class ClientsController : AProjectController<Client>
     {
-        IClientRepository _clientsRepo = new DummyClientRepository();
-
-        // GET: api/Clients
-        [HttpGet]
-        public HttpResponseMessage Get()
+        public ClientsController(IDataRepositoryFactory factory) : base(factory)
         {
-            return new HttpResponseMessage()
-            {
-                StatusCode = HttpStatusCode.OK,
-                Content = new StringContent(JsonConvert.SerializeObject(_clientsRepo.GetAll(), Formatting.Indented, new JsonSerializerSettings
-                {
-                    DateFormatString = "yyyy-MM-dd",
-                    ContractResolver = new CamelCasePropertyNamesContractResolver()
-                })),
-            };
-            
+
+        }
+
+        public override IHttpActionResult All(HttpRequestMessage request)
+        {
+            return base.All(request);
         }
 
         // GET: api/Clients/5
-        public HttpResponseMessage Get(int id)
+        public HttpResponseMessage Get(HttpRequestMessage request, int id)
         {
+            var _currentRepository = _repositoryFactory.GetDataRepository<Client>(request);
+
             HttpResponseMessage response = new HttpResponseMessage();
-            var foundedClient = _clientsRepo.Read(id);
+            var foundedClient = _currentRepository.Get(id);
             if (foundedClient != null)
             {
                 response.StatusCode = HttpStatusCode.OK;
-                response.Content = new StringContent(JsonConvert.SerializeObject(_clientsRepo.Read(id), Formatting.Indented, new JsonSerializerSettings
+                response.Content = new StringContent(JsonConvert.SerializeObject(_currentRepository.Get(id), Formatting.Indented, new JsonSerializerSettings
                 {
                     DateFormatString = "yyyy-MM-dd",
                     ContractResolver = new CamelCasePropertyNamesContractResolver()
@@ -56,12 +50,14 @@ namespace ManicureProject.Controllers
 
         // POST: api/Clients
         [HttpPost]
-        public HttpResponseMessage Post([FromBody]JObject entity)
+        public HttpResponseMessage Post(HttpRequestMessage request, [FromBody]JObject entity)
         {
+            var _currentRepository = _repositoryFactory.GetDataRepository<Client>(request);
+
             HttpResponseMessage response = new HttpResponseMessage();
             var newCandidate = entity.ToObject<Client>();
-            _clientsRepo.Create(newCandidate);
-            response.Content = new StringContent(JsonConvert.SerializeObject(_clientsRepo.GetAll().Last(), Formatting.Indented, new JsonSerializerSettings
+            _currentRepository.Add(newCandidate);
+            response.Content = new StringContent(JsonConvert.SerializeObject(_currentRepository.GetAll().Last(), Formatting.Indented, new JsonSerializerSettings
             {
                 DateFormatString = "dd/mm/yyyy",
                 ContractResolver = new CamelCasePropertyNamesContractResolver()
@@ -72,12 +68,14 @@ namespace ManicureProject.Controllers
 
         // PUT: api/Clients/5
         [HttpPut]
-        public HttpResponseMessage Put(int id, [FromBody]JObject entity)
+        public HttpResponseMessage Put(HttpRequestMessage request, int id, [FromBody]JObject entity)
         {
+            var _currentRepository = _repositoryFactory.GetDataRepository<Client>(request);
+
             HttpResponseMessage response = new HttpResponseMessage();
             var updatedClient = entity.ToObject<Client>();
-            _clientsRepo.Update(updatedClient);
-            response.Content = new StringContent(JsonConvert.SerializeObject(_clientsRepo.Read(updatedClient.Id), Formatting.Indented, new JsonSerializerSettings
+            _currentRepository.Update(updatedClient);
+            response.Content = new StringContent(JsonConvert.SerializeObject(_currentRepository.Get(updatedClient.Id), Formatting.Indented, new JsonSerializerSettings
             {
                 DateFormatString = "dd/mm/yyyy",
                 ContractResolver = new CamelCasePropertyNamesContractResolver()
@@ -88,18 +86,20 @@ namespace ManicureProject.Controllers
 
         // DELETE: api/Clients/5
         [HttpDelete]
-        public HttpResponseMessage Delete(int id)
+        public HttpResponseMessage Delete(HttpRequestMessage request, int id)
         {
+            var _currentRepository = _repositoryFactory.GetDataRepository<Client>(request);
+
             HttpResponseMessage response = new HttpResponseMessage();
             try {
-                _clientsRepo.Delete(id);
+                _currentRepository.Remove(id);
             }
             catch (Exception e)
             {
                 response = new HttpResponseMessage(HttpStatusCode.NoContent);
                 response.Content = new StringContent(e.Message);
             }
-            if (_clientsRepo.Read(id)==null)
+            if (_currentRepository.Get(id)==null)
             {
                 response = new HttpResponseMessage(HttpStatusCode.OK);
             }

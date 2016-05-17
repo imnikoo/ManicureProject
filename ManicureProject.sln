@@ -33,6 +33,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		WebEssentials2015-Settings.json = WebEssentials2015-Settings.json
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data", "Dataa\Data.csproj", "{F579B957-CD12-4799-A416-84709055A13A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{A2881EFA-DBCF-46F9-B498-6D4215190FA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A2881EFA-DBCF-46F9-B498-6D4215190FA9}.Release|Any CPU.ActiveCfg = Debug|Any CPU
 		{A2881EFA-DBCF-46F9-B498-6D4215190FA9}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{F579B957-CD12-4799-A416-84709055A13A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F579B957-CD12-4799-A416-84709055A13A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F579B957-CD12-4799-A416-84709055A13A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F579B957-CD12-4799-A416-84709055A13A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

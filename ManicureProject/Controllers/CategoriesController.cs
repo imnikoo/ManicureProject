@@ -1,5 +1,6 @@
-﻿using ManicureDomain.Abstract;
-using ManicureDomain.DummyRepos;
+﻿using Data.EntityFramework.Infrastructure;
+using ManicureDomain.Abstract;
+using ManicureDomain.Entities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
@@ -11,22 +12,10 @@ using System.Web.Http;
 
 namespace ManicureProject.Controllers
 {
-    public class CategoriesController : ApiController
+    public class CategoriesController : AProjectController<Category>
     {
-        ICategoryRepository _categoryRepo = new DummyCategoryRepository();
-
-        [HttpGet]
-        public HttpResponseMessage Get()
+        public CategoriesController(IDataRepositoryFactory factory) : base(factory)
         {
-            return new HttpResponseMessage()
-            {
-                StatusCode = HttpStatusCode.OK,
-                Content = new StringContent(JsonConvert.SerializeObject(_categoryRepo.GetAll(), Formatting.Indented, new JsonSerializerSettings
-                {
-                    DateFormatString = "yyyy-MM-dd",
-                    ContractResolver = new CamelCasePropertyNamesContractResolver()
-                })),
-            };
 
         }
     }

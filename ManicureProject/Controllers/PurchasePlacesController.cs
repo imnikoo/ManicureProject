@@ -1,5 +1,6 @@
-﻿using ManicureDomain.Abstract;
-using ManicureDomain.DummyRepos;
+﻿using Data.EntityFramework.Infrastructure;
+using ManicureDomain.Abstract;
+using ManicureDomain.Entities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
@@ -11,21 +12,10 @@ using System.Web.Http;
 
 namespace ManicureProject.Controllers
 {
-    public class PurchasePlacesController : ApiController
+    public class PurchasePlacesController : AProjectController<PurchasePlace>
     {
-        IPurchasePlaceRepository _places = new DummyPurchasePlaceRepository();
-        [HttpGet]
-        public HttpResponseMessage Get()
+        public PurchasePlacesController(IDataRepositoryFactory factory) : base(factory)
         {
-            return new HttpResponseMessage()
-            {
-                StatusCode = HttpStatusCode.OK,
-                Content = new StringContent(JsonConvert.SerializeObject(_places.GetAll(), Formatting.Indented, new JsonSerializerSettings
-                {
-                    DateFormatString = "yyyy-MM-dd",
-                    ContractResolver = new CamelCasePropertyNamesContractResolver()
-                })),
-            };
 
         }
     }

@@ -10,9 +10,10 @@ namespace ManicureDomain.Entities
     {
         public Entity()
         {
-            IsActive = true;
+            IsDeleted = false;
         }
+
         public int Id { get; set; }
-        public bool IsActive { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }
