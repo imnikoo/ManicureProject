@@ -9,7 +9,6 @@
     getOrders();
     vm.getItems = getItems;
 
-
     vm.options = {
         autoSelect: false,
         boundaryLinks: false,
@@ -55,7 +54,6 @@
 	        vm.items = value;
 	        vm.pageIsLoaded = true;
 	    });
-		
 	}
 
 	function getOrders() {

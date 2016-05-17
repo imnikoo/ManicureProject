@@ -17,5 +17,7 @@ namespace ManicureDomain.Abstract
 
         IQueryable<T> GetAll();
         IQueryable<T> FindBy(Expression<Func<T, bool>> predicate);
+
+        void Commit();
     }
 }
