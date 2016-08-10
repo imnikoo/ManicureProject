@@ -1,17 +1,34 @@
-export default function ClientController($state, $scope, $stateParams, $mdDialog, $mdMedia, ClientService) {
+export default function ClientController(
+    $state,
+    $scope,
+    $stateParams,
+    $mdDialog,
+    $mdMedia,
+    ClientService) {
     'ngInject';
 
     var vm = $scope;
-    vm.pageIsloaded = false;
-    vm.client = {};
-    vm.clientBefore = {};
-    getClient($stateParams.clientId);
+    vm.pageIsloaded;
+    _init();
+    vm.client = { city: null };
+    vm.clientBefore = { city: null };
     vm.cities = [];
-    getCities();
     vm.querySearch = querySearch;
+
+    function _init() {
+        if ($stateParams.clientId) {
+            vm.pageIsLoaded = false;
+            getClient($stateParams.clientId);
+        }
+        else {
+            vm.pageIsLoaded = true;
+        }
+        getCities();
+    }
 
     vm.saveClientAndBack = () => {
         vm.saveClient().then(value => $state.go('clients'));
+        //TODO: handle back to the page where user was
     }
 
     vm.saveClient = () => {
@@ -19,7 +36,7 @@ export default function ClientController($state, $scope, $stateParams, $mdDialog
     }
 
     vm.checkAndWarn = ($event) => {
-        if(isClientChanged()) {
+        if (isClientChanged()) {
             vm.showConfirm($event);
         }
         else {
@@ -31,49 +48,49 @@ export default function ClientController($state, $scope, $stateParams, $mdDialog
         return !_.isEqual(vm.client, vm.clientBefore);
     }
 
-    vm.showConfirm = function(ev) {
+    vm.showConfirm = function (ev) {
         var confirm = $mdDialog.confirm()
-              .title('Прет')
-              .textContent('Вы изменили клиента и выходите. Выйти?')
-              .ariaLabel('Оооо..')
-              .targetEvent(ev)
-              .ok('Выйти')
-              .cancel('Отмена');
+            .title('Прет')
+            .textContent('Вы изменили клиента и выходите. Выйти?')
+            .ariaLabel('Оооо..')
+            .targetEvent(ev)
+            .ok('Выйти')
+            .cancel('Отмена');
 
-        $mdDialog.show(confirm).then(function() {
+        $mdDialog.show(confirm).then(function () {
             $state.go('clients');
-        }, function() {
-            
+        }, function () {
+
         });
     }
 
     function getCities() {
         ClientService.getCities().then(value => {
-            vm.cities=value;
+            vm.cities = value;
         })
     }
 
     function getClient(clientId) {
-        ClientService.getClient(clientId).then( value => {
+        ClientService.getClient(clientId).then(value => {
             vm.client = value;
-            vm.clientBefore = _.clone(value);
+            vm.clientBefore = _.cloneDeep(value);
             vm.pageIsLoaded = true;
         })
 
     }
     function querySearch(query) {
+        console.log(vm.client);
         console.log(query);
-        var results = query ? vm.cities.filter( createFilterFor(query) ) : vm.cities,
-           deferred;
+        var results = query ? vm.cities.filter(createFilterFor(query)) : vm.cities,
+            deferred;
         return results;
     }
 
     function createFilterFor(query) {
         var lowercaseQuery = angular.lowercase(query);
         return function filterFn(category) {
-            return (city.title.toLowerCase().indexOf(lowercaseQuery) === 0);
+            return (vm.client.city.title.toLowerCase().indexOf(lowercaseQuery) === 0);
         };
     }
 
 }
-	

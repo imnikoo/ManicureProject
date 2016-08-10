@@ -1,16 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ManicureDomain.Abstract;
 
 namespace Data.EntityFramework.Infrastructure
 {
     public interface IUnitOfWork
     {
-        void Commit();
+        ICategoryRepository CategoryRepository { get; }
+        ICityRepository CityRepository { get; }
+        IClientRepository ClientRepository { get; }
+        IItemRepository ItemRepository { get; }
+        IOrderRepository OrderRepository { get; }
+        IPurchasePlaceRepository PurchasePlaceRepository { get; }
+        IPurchaseRepository PurchaseRepository { get; }
 
-        DbContext Context { get; }
+        void Commit();
     }
 }

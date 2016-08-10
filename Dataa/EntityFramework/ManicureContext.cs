@@ -46,6 +46,23 @@ namespace Data.EntityFramework
         public override int SaveChanges()
         {
             ObjectContext context = ((IObjectContextAdapter)this).ObjectContext;
+            var objectStateEntries =
+                from e in context.ObjectStateManager.GetObjectStateEntries(EntityState.Added)
+                where
+                    e.IsRelationship == false &&
+                    e.Entity != null &&
+                    typeof(Entity).IsAssignableFrom(e.Entity.GetType())
+                select e;
+            foreach (var entry in objectStateEntries)
+            {
+                var entityBase = entry.Entity as Entity;
+
+                if (entry.State == EntityState.Added)
+                {
+                    entityBase.CreatedAt = DateTime.Now;
+                }
+            }
+
 
             var deletedEntries = from e in context.ObjectStateManager.GetObjectStateEntries(EntityState.Deleted)
                                  where
@@ -121,11 +138,9 @@ namespace Data.EntityFramework
         private string GetPrimaryKeyName(Type type)
         {
             EntitySetBase es = GetEntitySet(type);
-
             return es.ElementType.KeyMembers[0].Name;
         }
 
-        private static Dictionary<Type, EntitySetBase> _mappingCache =
-       new Dictionary<Type, EntitySetBase>();
+        private static Dictionary<Type, EntitySetBase> _mappingCache = new Dictionary<Type, EntitySetBase>();
     }
 }

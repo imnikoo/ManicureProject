@@ -1,32 +1,31 @@
-<div layout="row" layout-sm="column" layout-align="space-around" ng-show="!pageIsLoaded">
+<!DOCTYPE html>
+<div class="loading-progress" ng-show="!pageIsLoaded">
     <md-progress-circular md-mode="indeterminate"></md-progress-circular>
 </div>
 <div ng-show="pageIsLoaded">
     <md-content layout="column">
         <md-input-container class="search-container" style="margin: 0; margin-bottom: 4px; margin-top: 18px;">
             <label>Поиск</label>
-            <input ng-model="filterText">
+            <input ng-model="query.filterText" ng-keyup="performSearch(query)">
         </md-input-container>
         <md-table-container>
-            <table md-table md-row-select="options.rowSelection" ng-model="selected" md-progress="promise">
+            <table md-table class="clients-view-block" multiple="{{options.multiSelect}}" md-row-select="options.rowSelection" ng-model="selectedClients" md-progress="promise">
                 <thead md-head md-order="query.order" md-on-reorder="logOrder">
                     <tr md-row>
                         <th md-column md-order-by="id"><span>#</span></th>
-                        <th md-column md-order-by="name"><span>Имя</span></th>
+                        <th md-column md-order-by="lastName"><span>Имя</span></th>
                         <th md-column md-order-by="phoneNumber"><span>Телефон</span></th>
                         <th md-column md-order-by="city.title"><span>Город</span></th>
-                        <th md-column md-numeric md-order-by="mailNumber"><span>Номер новой почты</span></th>
                         <th md-column md-order-by="source"><span>Источник</span></th>
                         <th md-column md-order-by="additionalInformation"><span>Дополнительная информация</span></th>
                     </tr>
                 </thead>
                 <tbody md-body>
-                    <tr md-row md-select="client" md-auto-select="options.autoSelect" ng-repeat="client in clients | filter: filterText | orderBy: query.order | limitTo: query.limit : (query.page -1) * query.limit">
+                    <tr md-row md-on-select="select" md-on-deselect="deselect" md-select="client" md-auto-select="options.autoSelect" ng-repeat="client in clients | orderBy: query.order | limitTo: query.limit">
                         <td md-cell>{{client.id}}</td>
-                        <td md-cell ui-sref="client({ clientId : {{client.id}}})">{{client.name}}</td>
+                        <td md-cell ui-sref="client({ clientId : {{client.id}}})">{{client.firstName}} {{client.lastName}}</td>
                         <td md-cell>{{client.phoneNumber}}</td>
                         <td md-cell>{{client.city.title}}</td>
-                        <td md-cell>{{client.mailNumber}}</td>
                         <td md-cell>{{client.source}}</td>
                         <td md-cell>{{client.additionalInformation}}</td>
                     </tr>
@@ -34,8 +33,9 @@
             </table>
         </md-table-container>
         <md-table-pagination md-limit="query.limit" md-page="query.page"
-                             md-total="{{clients.length}}"
+                             md-total="{{queryResult.total}}"
                              md-page-select="options.pageSelector"
-                             md-boundary-links="options.boundaryLinks"></md-table-pagination>
+                             md-boundary-links="options.boundaryLinks"
+                             md-on-paginate="getClients"></md-table-pagination>
     </md-content>
 </div>

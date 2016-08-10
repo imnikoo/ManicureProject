@@ -4,12 +4,11 @@ using Data.EntityFramework;
 using Data.EntityFramework.Infrastructure;
 using Data.EntityFramework.Repositories;
 using ManicureDomain.Abstract;
-using System;
-using System.Collections.Generic;
+using ManicureDomain.DTOs;
+using ManicureDomain.Entities;
+using Services.Services;
 using System.Data.Entity;
-using System.Linq;
 using System.Reflection;
-using System.Web;
 using System.Web.Http;
 
 namespace ManicureProject
@@ -34,27 +33,35 @@ namespace ManicureProject
             .As<DbContext>()
            .InstancePerRequest();
 
-           /* builder.RegisterType<EFCandidateRepository>()
-                .As<IRepository<Candidate>>()
-                .InstancePerRequest();
-
-            builder.RegisterType<EFVacancyStageInfoRepository>()
-                .As<IRepository<VacancyStageInfo>>()
-                .InstancePerRequest();
-
-            builder.RegisterType<EFVacancyRepository>()
-                .As<IRepository<Vacancy>>()
-                .InstancePerRequest();*/
-
             builder.RegisterType<UnitOfWork>()
             .As<IUnitOfWork>()
             .InstancePerRequest();
 
-            builder.RegisterType<DataRepositoryFactory>()
-            .As<IDataRepositoryFactory>()
-            .InstancePerRequest();
+            builder.RegisterType<CategoryService>()
+               .As<BaseService<Category, CategoryDTO>>()
+               .InstancePerRequest();
 
-            builder.RegisterGeneric(typeof(EFEntityRepository<>))
+            builder.RegisterType<CityService>()
+               .As<BaseService<City, CityDTO>>()
+               .InstancePerRequest();
+
+            builder.RegisterType<ClientService>()
+               .As<ClientService>()
+               .InstancePerRequest();
+
+            builder.RegisterType<ItemService>()
+               .As<ItemService>()
+               .InstancePerRequest();
+
+            builder.RegisterType<OrderService>()
+               .As<OrderService>()
+               .InstancePerRequest();
+
+            builder.RegisterType<PurchasePlaceService>()
+             .As<BaseService<PurchasePlace, PurchasePlaceDTO>>()
+             .InstancePerRequest();
+
+            builder.RegisterGeneric(typeof(Repository<>))
             .As(typeof(IRepository<>))
             .InstancePerRequest();
 

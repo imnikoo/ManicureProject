@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ManicureDomain.Entities
 {
@@ -14,9 +10,10 @@ namespace ManicureDomain.Entities
         public DateTime? ApproximateArrivalDate { get; set; }
         public DateTime? ArrivalDate { get; set; }
         public bool IsArrived { get; set; }
+        public string TrackNumber { get; set; }
 
-        public int PlaceId { get; set; }
-        public virtual PurchasePlace Place { get; set; }
+        public int PurchasePlaceId { get; set; }
+        public virtual PurchasePlace PurchasePlace { get; set; }
 
         public int ItemId { get; set; }
         public virtual Item Item { get; set; }

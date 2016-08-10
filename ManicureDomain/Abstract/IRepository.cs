@@ -1,23 +1,27 @@
-﻿using System;
+﻿using ManicureDomain.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ManicureDomain.Abstract
 {
-    public interface IRepository<T>
+    public interface IRepository<TEntity> : IDisposable
+        where TEntity : Entity
     {
-        void Add(T entity);
-        T Get(int id);
-        void Update(T entity);
-        void Remove(T entity);
-        void Remove(int id);
+        IEnumerable<TEntity> Get(
+            IEnumerable<Expression<Func<TEntity, bool>>> filters = null,
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+            string includeProperties = "");
 
-        IQueryable<T> GetAll();
-        IQueryable<T> FindBy(Expression<Func<T, bool>> predicate);
+        TEntity GetByID(object id);
 
-        void Commit();
+        void Insert(TEntity entity);
+
+        void Delete(object id);
+
+        void Delete(TEntity entityToDelete);
+
+        void Update(TEntity entityToUpdate);
     }
 }

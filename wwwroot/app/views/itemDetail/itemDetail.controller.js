@@ -1,28 +1,25 @@
 ﻿
-export default function ItemDetailController($state, $scope, $stateParams, $mdDialog, $mdMedia, ItemService) {
+export default function ItemDetailController($state, $scope, $q, $stateParams, 
+$mdDialog, $mdMedia,
+    ItemService) {
     'ngInject';
     var vm = $scope;
-
-    vm.pageIsLoaded = false;
+    vm.pageIsLoaded;
     vm.showPurchases = false;
     vm.showItemOrder = false;
     vm.item = {
         purchases: [],
     };
-    vm.itemBefore = {};
-    getItem($stateParams.itemId);   
+    vm.itemBefore = {
+        purchases: [],
+    };
     vm.categories = [];
-    getCategories();
     vm.purchasePlaces = [];
-    getPurchasePlaces();
-    vm.querySearch = querySearch;  
-    vm.saveItem = saveItem;
-    vm.saveItemAndBack = saveItemAndBack;
-    vm.calculateAndPasteMarginalPrice = calculateAndPasteMarginalPrice;
-    vm.markUp = markUp;
-    vm.tooglePurchases = tooglePurchases;
-    vm.confirmOrder = confirmOrder; 
     vm.orderPlaceTitle = {};
+
+    vm.pageOfList = _.clone($stateParams.page);
+    console.log($stateParams, 'params');
+    console.log(vm.pageOfList);
 
     vm.options = {
         autoSelect: false,
@@ -31,48 +28,66 @@ export default function ItemDetailController($state, $scope, $stateParams, $mdDi
         pageSelector: false,
         rowSelection: false
     };
-
     vm.query = {
-        order: 'id',
+        order: '-orderDate',
         limit: 15,
         page: 1
     };
 
     vm.orderPlace = {};
-    vm.purchase={};
+    vm.purchase = {};
 
-    function confirmOrder() {
-        console.log(vm.purchase)
-        if(vm.purchase.pricePerPiece && vm.purchase.amount  && vm.purchase.place && vm.purchase.orderDate) {
-            vm.purchase.approximateArrivalDate = null;
-            vm.purchase.place = JSON.parse(vm.purchase.place);
-            vm.purchase.arrivalDate = null;
-            vm.purchase.isArrived = false;
-            vm.item.purchases.push(vm.purchase);
-            saveItem().then((updatedItem) => { 
-                vm.item = updatedItem;
-                vm.purchase = {}; 
-                vm.showItemOrder=false; 
-
-            });
+    function _init() {
+        if ($stateParams.itemId) {
+            vm.getItem($stateParams.itemId);
+            vm.pageIsLoaded = false;
         }
+        else {
+            vm.pageIsLoaded = true;
+        }
+        vm.getCategories();
+        vm.getPurchasePlaces();
     }
 
-    function tooglePurchases() {
-        if(vm.showItemOrder) {
+    function _isPurchaseValid() {
+        let deffered = $q.defer();
+        let comparingResult =  vm.purchase.pricePerPiece && vm.purchase.amount && vm.purchase.place && vm.purchase.orderDate;
+        deffered.resolve(comparingResult);
+        return deffered.promise;
+    }
+
+    vm.confirmOrder = () => {
+        _isPurchaseValid().then(() => {
+            let approxArriveDate = new Date(vm.purchase.orderDate).setDate(approxArriveDate.getDate() + 30);
+            let newPurchase = {
+                pricePerPiece: vm.purchase.pricePerPiece,
+                amount: vm.purchase.amount,
+                isArrived: false,
+                orderDate: vm.purchase.orderDate,
+                purchasePlace: JSON.parse(vm.purchase.place),
+                approximateArrivalDate: approxArriveDate,
+                trackNumber: vm.purchase.trackNumber
+            };
+            vm.item.purchases.push(newPurchase);
+            vm.purchase = {};
+            vm.showItemOrder = false;
+        });
+    }
+
+    vm.tooglePurchases = () => {
+        if (vm.showItemOrder) {
             vm.showItemOrder = false;
         }
-        vm.showPurchases=!vm.showPurchases;
+        vm.showPurchases = !vm.showPurchases;
     }
 
-    function markUp () {
-        return _.round((vm.item.marginalPrice*100/vm.item.originalPrice)-100);
+    vm.markUp = () => {
+        return _.round((vm.item.marginalPrice * 100 / vm.item.originalPrice) - 100);
     }
 
-    function calculateAndPasteMarginalPrice() {
-        console.log(vm.item.originalPrice*1.5);
-        if(vm.item.originalPrice) {
-            vm.item.marginalPrice=parseFloat((vm.item.originalPrice*1.5).toFixed(2));
+    vm.calculateAndPasteMarginalPrice = () => {
+        if (vm.item.originalPrice) {
+            vm.item.marginalPrice = parseFloat((vm.item.originalPrice * 1.5).toFixed(2));
         }
     }
 
@@ -81,77 +96,80 @@ export default function ItemDetailController($state, $scope, $stateParams, $mdDi
     }
 
     vm.toogleOrder = () => {
-        if(vm.showPurchases) {
-            vm.showPurchases=false;
+        if (vm.showPurchases) {
+            vm.showPurchases = false;
         }
-        vm.showItemOrder=!vm.showItemOrder;
+        vm.showItemOrder = !vm.showItemOrder;
     }
     vm.checkAndWarn = ($event) => {
-        if(isItemChanged()) {
+        if (isItemChanged()) {
             vm.showConfirm($event);
         }
         else {
-            $state.go('items');
+            goBack();
         }
     }
-    vm.showConfirm = function(ev) {
+    vm.showConfirm = function (ev) {
         var confirm = $mdDialog.confirm()
-              .title('Э')
-              .textContent('Вы изменили содержимое товара и выходите. Выйти без сохранения?')
-              .ariaLabel('Ди?')
-              .targetEvent(ev)
-              .ok('Выйти')
-              .cancel('Отмена');
+            .title('Внимание!')
+            .textContent('Вы изменили содержимое товара и выходите. Выйти без сохранения?')
+            .ariaLabel('Ди?')
+            .targetEvent(ev)
+            .ok('Выйти')
+            .cancel('Отмена');
 
-        $mdDialog.show(confirm).then(function() {
-            $state.go('items');
-        }, function() {
-            
+        $mdDialog.show(confirm).then(function () {
+            goBack();
         });
     }
 
-    function saveItemAndBack() {
-        saveItem().then(value => $state.go('items'));
+    vm.saveItemAndBack = () => {
+        saveItem().then(() => {
+            goBack();
+        });
     }
 
-    function saveItem() {
+    function goBack() {
+        $state.go('items', { page: vm.pageOfList });
+    }
+
+    vm.saveItem = () => {
         return ItemService.saveItem(vm.item);
     }
 
-    function getItem(itemId) {
-        if(itemId) {
+    vm.getItem = (itemId) => {
+        if (itemId) {
             ItemService.getItem(itemId).then(value => {
                 vm.item = value;
                 vm.itemBefore = _.clone(value);
                 vm.pageIsLoaded = true;
             });
         }
-	}
+    }
 
-	function getCategories() {
-	    ItemService.getCategories().then(value => {
-	        vm.categories = value;    
-	    });
-	}
+    vm.getCategories = () => {
+        ItemService.getCategories().then(value => {
+            vm.categories = value;
+        });
+    }
 
-	function getPurchasePlaces() {
+    vm.getPurchasePlaces = () => {
         ItemService.getPurchasePlaces().then(value => {
             vm.purchasePlaces = (value);
         })
-	}
+    }
 
-	function querySearch(query) {
-	    console.log(query);
-	    var results = query ? vm.categories.filter( createFilterFor(query) ) : vm.categories,
-           deferred;
-	    return results;
-	}
+    vm.querySearch = (query) => {
+        var results = query ? vm.categories.filter(createFilterFor(query)) : vm.categories,
+            deferred;
+        return results;
+    }
 
-	function createFilterFor(query) {
-	    var lowercaseQuery = angular.lowercase(query);
-
-	    return function filterFn(category) {
-	        return (category.title.toLowerCase().indexOf(lowercaseQuery) === 0);
-	    };
-	}
+    vm.createFilterFor = (query) => {
+        var lowercaseQuery = angular.lowercase(query);
+        return function filterFn(category) {
+            return (category.title.toLowerCase().indexOf(lowercaseQuery) === 0);
+        };
+    }
+    _init();
 }

@@ -11,7 +11,7 @@ namespace Dataa.EntityFramework.Mapping
     {
         public PurchaseConfiguration()
         {
-            HasRequired(x => x.Place).WithMany().HasForeignKey(x => x.PlaceId);
+            HasRequired(x => x.PurchasePlace).WithMany().HasForeignKey(x => x.PurchasePlaceId);
             HasRequired(x => x.Item).WithMany().HasForeignKey(x => x.ItemId);
         }
     }

@@ -11,7 +11,7 @@ namespace Dataa.EntityFramework.Mapping
     {
         public ClientConfiguration()
         {
-            HasOptional(x => x.City).WithMany();
+            HasOptional(x => x.City).WithMany().HasForeignKey(x=>x.CityId);
             HasMany(x => x.Orders).WithRequired(x => x.Client).HasForeignKey(x => x.ClientId);
         }
     }

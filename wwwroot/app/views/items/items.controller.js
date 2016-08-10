@@ -1,15 +1,14 @@
-﻿export default function ItemsController($scope, ItemService) {
+﻿export default function ItemsController($scope, $state, $stateParams, $mdDialog, $mdMedia, ItemService) {
 	'ngInject';
 	var vm = $scope;
 	vm.pageIsLoaded = false;
     vm.title = "Загрузка.."
     vm.items = [];
-    vm.orders = [];
-    getItems();
-    getOrders();
-    vm.getItems = getItems;
+	vm.itemCount = $stateParams.orderedItems ? $stateParams.orderedItems : [];
+	vm.selectedItems = [];
+	console.log(vm.selectedItems, 'popali');
 
-    vm.options = {
+    vm.options = $stateParams.options ? $stateParams.options : {
         autoSelect: false,
         boundaryLinks: false,
         largeEditDialog: false,
@@ -18,46 +17,82 @@
     };
 
     vm.query = {
-        order: 'id',
-        limit: 15,
-    page: 1
+        order: '-id',
+        limit: 10,
+		page: $stateParams.page ? $stateParams.page : 1,
+		filterText: ''
     };
 
-	vm.calculateOrderedByClients = calculateOrderedByClients;
-	vm.calculateOrderedByUser = calculateOrderedByUser;
+	vm.deselect = (item) => {
+		vm.itemCount = _.filter(vm.itemCount, (selectedItem) => {
+			return selectedItem.item.id !== item.id;
+		});
+	}
 
-	function calculateOrderedByUser(item) {
-		var orderedItemsCount = 0;
-		item.purchases.forEach((purchase) => {
-			if(!purchase.isArrived) {
-				orderedItemsCount+=purchase.amount;
+	vm.select = (item) => {
+		var confirm = $mdDialog.prompt()
+			.title('Выбор количества товара')
+			.placeholder('Количество')
+			.ok('ОК')
+			.cancel('Отменить');
+		$mdDialog.show(confirm).then((result) => {
+			let parsedResult = parseInt(result);
+			if (!isNaN(parsedResult)) {
+				vm.itemCount.push({
+					item: item,
+					quantity: parsedResult
+				});
+			} else {
+				vm.selectedItems = _.filter(vm.selectedItems, (selectedItem) => {
+					return selectedItem.id !== item.id;
+				});
+				$mdDialog.show(
+					$mdDialog.alert()
+						.clickOutsideToClose(true)
+						.title('Количество')
+						.textContent('Товар исчисляется в количестве, а не в непонятности.')
+						.ok('Окей.')
+				);
 			}
-		})
-		if(orderedItemsCount==0) return '';
-		return '+' + orderedItemsCount;
-	}
-	function calculateOrderedByClients(item) {
-		var orderedItemsCount = 0;
-		vm.orders.forEach((order) => {        
-			order.items.forEach((orderedItem) => {
-				if(orderedItem.item.id===item.id) {
-					orderedItemsCount+=orderedItem.quantity;
-				}
-			})
-		})
-		if(orderedItemsCount==0) return '';
-		return '-' + orderedItemsCount;
-	}
+		});
+		console.log(vm.selectedItems, 'dobavili');
+	};
 
-	function getItems() {
-	    ItemService.getItems().then(value => {
-	        vm.items = value;
-	        vm.pageIsLoaded = true;
-	    });
-	}
+	vm.getItems = (page, limit) => {
+		let query = {
+			'limit': limit,
+			'page': page,
+			'filterText': vm.query.filterText
+		};
+		if (!page) {
+            query = vm.query;
+        }
+		vm.performSearch(query);
+	};
 
-	function getOrders() {
-		var orders = ItemService.getOrders();
-		orders.then(value => vm.orders = value);
-	}
+	vm.performSearch = (query) => {
+		vm.promise = ItemService.getItems(query).then(value => {
+			vm.items = value.item;
+			vm.queryResult = {
+				'total': value.total,
+			};
+			vm.pageIsLoaded = true;
+			vm.selectedItems = vm.itemCount.length ? _.filter(vm.items, (item) => {
+				return _.some(_.map(vm.itemCount, (itemCountPair) => {
+					return itemCountPair.item;
+				}), { id: item.id });
+			}) : [];
+		});
+	};
+
+    vm.goToItem = (itemId) => {
+        $state.go('item', { itemId, page: vm.query.page });
+    };
+
+	vm.goToNextStage = () => {
+		$state.go('createOrder', { stage: 2, orderedItems: vm.itemCount });
+	};
+
+    vm.getItems();
+
 }

@@ -9,3 +9,91 @@
 .order-label {
     width: 100px !important;
 }
+
+.main-view {
+    height: 100%;
+}
+
+.button-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.items-td {
+    padding: 0px !important;
+}
+
+.items-card {
+    margin: 4px;
+    padding: 4px;
+}
+.items-card span {
+    font-weight: bold;
+    font-size: 12px; 
+}
+
+.order-table td {
+}
+
+.button-container > md-button {
+    margin:auto;
+}
+
+.loading-progress {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: calc(100% - 100px); 
+}
+
+.ordered-items-table th {
+    font-weight: bold;
+    text-align: left;
+    padding: 16px;
+    color: rgba(0, 0, 0, 0.54);
+    font-size: 12px; 
+}
+
+.reciever-block {
+    margin-bottom: 1px !important;
+}
+
+.second-stage-view {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    align-items: flex-start;
+}
+
+#tableCard {
+    order: 0;
+    flex-grow: 3;
+}
+
+
+
+.sum-cell {
+    text-align: right !important;
+    font-weight: bold;
+    font-size: 14px !important;
+    color:green !important;
+}
+
+.table-container {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.ordered-items-table {
+    border:  1px rgba(0, 0, 0, 0.12) solid; 
+    width: 100%;
+}
+
+.ordered-items-table td {
+    border-top: 1px rgba(0, 0, 0, 0.12) solid;
+    padding: 16px;
+    color: rgba(0, 0, 0, 0.87);
+    font-size: 13px;
+    text-align: left;
+}

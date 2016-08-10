@@ -65,9 +65,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EntityFramework\Infrastructure\DataRepositoryFactory.cs" />
     <Compile Include="EntityFramework\Infrastructure\Disposable.cs" />
-    <Compile Include="EntityFramework\Infrastructure\IDataRepositoryFactory.cs" />
     <Compile Include="EntityFramework\Infrastructure\IUnitOfWork.cs" />
     <Compile Include="EntityFramework\Infrastructure\UnitOfWork.cs" />
     <Compile Include="EntityFramework\ManicureContext.cs" />
@@ -77,13 +75,21 @@
     <Compile Include="EntityFramework\Mapping\OrderConfiguration.cs" />
     <Compile Include="EntityFramework\Mapping\OrderItemConfiguration.cs" />
     <Compile Include="EntityFramework\Mapping\PurchaseConfiguration.cs" />
-    <Compile Include="EntityFramework\Repositories\EFEntityRepository.cs" />
-    <Compile Include="Extensions\RequestMessageExtensions.cs" />
-    <Compile Include="Migrations\201605171310567_init.cs" />
-    <Compile Include="Migrations\201605171310567_init.Designer.cs">
-      <DependentUpon>201605171310567_init.cs</DependentUpon>
+    <Compile Include="EntityFramework\Mapping\PurchasePlaceConfiguration.cs" />
+    <Compile Include="EntityFramework\Repositories\CategoryRepository.cs" />
+    <Compile Include="EntityFramework\Repositories\CityRepository.cs" />
+    <Compile Include="EntityFramework\Repositories\ClientRepository.cs" />
+    <Compile Include="EntityFramework\Repositories\ItemRepository.cs" />
+    <Compile Include="EntityFramework\Repositories\OrderRepository.cs" />
+    <Compile Include="EntityFramework\Repositories\PurchasePlaceRepository.cs" />
+    <Compile Include="EntityFramework\Repositories\PurchaseRepository.cs" />
+    <Compile Include="EntityFramework\Repositories\Repository.cs" />
+    <Compile Include="Migrations\201608070827500_init.cs" />
+    <Compile Include="Migrations\201608070827500_init.Designer.cs">
+      <DependentUpon>201608070827500_init.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Migrations\DummyData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -100,8 +106,8 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201605171310567_init.resx">
-      <DependentUpon>201605171310567_init.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201608070827500_init.resx">
+      <DependentUpon>201608070827500_init.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

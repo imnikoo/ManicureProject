@@ -1,47 +1,46 @@
-﻿using Data.EntityFramework.Infrastructure;
-using ManicureDomain.Abstract;
+﻿using ManicureDomain.DTOs;
 using ManicureDomain.Entities;
+using ManicureProject.Extensions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using System.Linq;
-using System.Net.Http;
+using Services.Services;
 using System.Web.Http;
 
 namespace ManicureProject.Controllers
 {
-    public class AProjectController<DomainEntity> : ApiController
-        where DomainEntity : Entity, new ()
+    public class AProjectController<DomainEntity, ViewModel> : ApiController
+        where DomainEntity : Entity, new()
+        where ViewModel : EntityDTO, new()
     {
         protected static JsonSerializerSettings PROJECT_SERIALIZER_SETTINGS = new JsonSerializerSettings()
         {
             ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore,
             ContractResolver = new CamelCasePropertyNamesContractResolver()
         };
-        
-        protected IDataRepositoryFactory _repositoryFactory;
 
-        public AProjectController(IDataRepositoryFactory repositoryFactory)
+        BaseService<DomainEntity, ViewModel> entityService;
+
+        public AProjectController(BaseService<DomainEntity, ViewModel> service)
         {
-            _repositoryFactory = repositoryFactory;
+            entityService = service;
+        }
+
+        public AProjectController()
+        {
         }
 
         [HttpGet]
-        public virtual IHttpActionResult All(HttpRequestMessage request)
+        public virtual IHttpActionResult Get()
         {
-            var _currentRepository = _repositoryFactory.GetDataRepository<DomainEntity>(request);
-
-            var entitiesQuery = _currentRepository.GetAll().OrderBy(x => x.Id);
-            var entities = entitiesQuery.ToList();
-            return Json(entities, PROJECT_SERIALIZER_SETTINGS);
+            var foundedEntities = entityService.Get();
+            return Json(foundedEntities, PROJECT_SERIALIZER_SETTINGS);
         }
 
-        // GET: api/Clients/5
         [HttpGet]
-        public virtual IHttpActionResult Get(HttpRequestMessage request, int id)
+        [Route("{id:int}")]
+        public virtual IHttpActionResult Get(int id)
         {
-            var _currentRepository = _repositoryFactory.GetDataRepository<DomainEntity>(request);
-
-            var foundedEntity = _currentRepository.Get(id);
+            var foundedEntity = entityService.Get(id);
             if (foundedEntity != null)
             {
                 return Json(foundedEntity, PROJECT_SERIALIZER_SETTINGS);
@@ -49,70 +48,38 @@ namespace ManicureProject.Controllers
             return NotFound();
         }
 
-        // POST: api/Clients
-        [HttpPost]
-        public virtual IHttpActionResult Add(HttpRequestMessage request, [FromBody]DomainEntity entity)
-        {
-            var _currentRepository = _repositoryFactory.GetDataRepository<DomainEntity>(request);
-
-            if (!ModelState.IsValid)
-            {
-                var errorList = ModelState.Keys.SelectMany(k => ModelState[k].Errors).Select(x => x.ErrorMessage);
-                return Json(new
-                {
-                    summary = "Bad request",
-                    errorList = errorList
-                });
-            }
-            else
-            {
-                var newEntity = entity;
-                _currentRepository.Add(newEntity);
-                _currentRepository.Commit();
-                return Json(newEntity, PROJECT_SERIALIZER_SETTINGS);
-            }
-        }
-
-        // PUT: api/Clients/5
-        [HttpPut]
-        public virtual IHttpActionResult Put(HttpRequestMessage request, int id, [FromBody]DomainEntity entity)
-        {
-            var _currentRepository = _repositoryFactory.GetDataRepository<DomainEntity>(request);
-
-            if (!ModelState.IsValid)
-            {
-                var errorList = ModelState.Keys.SelectMany(k => ModelState[k].Errors).Select(x => x.ErrorMessage);
-
-                return Json(new
-                {
-                    summary = "Bad request",
-                    errorList = errorList
-                });
-            }
-            else
-            {
-                var changedDomainEntity = entity;
-                _currentRepository.Update(changedDomainEntity);
-                _currentRepository.Commit();
-                return Json(changedDomainEntity, PROJECT_SERIALIZER_SETTINGS);
-            }
-        }
-
-        // DELETE: api/Clients/5
         [HttpDelete]
-        public virtual IHttpActionResult Remove(HttpRequestMessage request, int id)
+        [Route("{id:int}")]
+        public virtual IHttpActionResult Remove(int id)
         {
-            var _currentRepository = _repositoryFactory.GetDataRepository<DomainEntity>(request);
-
-            var entityToRemove = _currentRepository.Get(id);
-            if (entityToRemove != null)
+            if (entityService.Delete(id))
             {
-                _currentRepository.Remove(entityToRemove);
-                _currentRepository.Commit();
                 return Ok();
             }
             return BadRequest();
         }
 
+        [HttpPost]
+        public virtual IHttpActionResult Add([FromBody]ViewModel entity)
+        {
+            if (!ModelState.IsValid)
+            {
+                return Json(ModelState.Errors(), PROJECT_SERIALIZER_SETTINGS);
+            }
+            var newEntity = entityService.Add(entity);
+            return Json((newEntity), PROJECT_SERIALIZER_SETTINGS);
+        }
+
+        [HttpPut]
+        [Route("{id}")]
+        public virtual IHttpActionResult Put(int id, [FromBody]ViewModel changedEntity)
+        {
+            if (!ModelState.IsValid)
+            {
+                return Json(ModelState.Errors(), PROJECT_SERIALIZER_SETTINGS);
+            }
+            var domainChangedEntity = entityService.Update(changedEntity);
+            return Json(domainChangedEntity, PROJECT_SERIALIZER_SETTINGS);
+        }
     }
 }

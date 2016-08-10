@@ -1,4 +1,4 @@
-<div layout="row" layout-sm="column" layout-align="space-around" ng-show="!pageIsLoaded">
+<div class="loading-progress" ng-show="!pageIsLoaded">
     <md-progress-circular md-mode="indeterminate"></md-progress-circular>
 </div>
 <div ng-show="pageIsLoaded">
@@ -8,19 +8,25 @@
                 <form name="clientForm">
                     <md-input-container class="md-block">
                         <label>Имя</label>
-                        <input required name="name" ng-model="client.name">
-                        <div ng-messages="clientForm.name.$error">
+                        <input required name="firstName" ng-model="client.firstName">
+                        <div ng-messages="clientForm.firstName.$error">
                             <div ng-message="required">
                                 Введи <b>имя клиента</b>
                             </div>
                         </div>
                     </md-input-container>
-
-                    <md-autocomplete md-selected-item="client.city"
-                                     md-search-text="searchCity"
-                                     md-items="city in querySearch(searchCity)"
-                                     md-item-text="city.title" md-min-length="0"
-                                     placeholder="">
+                    <md-input-container class="md-block">
+                        <label>Фамилия</label>
+                        <input required name="lastName" ng-model="client.lastName">
+                        <div ng-messages="clientForm.lastName.$error">
+                            <div ng-message="required">
+                                Введи <b>фамилию клиента</b>
+                            </div>
+                        </div>
+                    </md-input-container>
+                    <label class="">Город</label>
+                    <md-autocomplete md-selected-item="client.city" md-search-text="searchCity" md-items="city in querySearch(searchCity)" md-item-text="city.title"
+                        md-min-length="0" placeholder="">
                         <md-item-template>
                             <span md-highlight-text="searchCity" md-highlight-flags="^i">{{city.title}}</span>
                         </md-item-template>
@@ -29,17 +35,13 @@
                             <a ng-click="">Клик, чтобы создать!</a>
                         </md-not-found>
                     </md-autocomplete>
-                    <md-input-container class="md-block" >
+                    <md-input-container class="md-block">
                         <label>Телефон</label>
                         <input required name="phoneNumber" ng-model="client.phoneNumber" ng-pattern="/\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/">
-                        <div class="hint" ng-show="showHints">+3##########</div>
+                        <div class="hint" ng-show="showHints">+3(###)###-##-##</div>
                         <div ng-messages="clientForm.phoneNumber.$error" ng-hide="showHints">
-                            <div ng-message="pattern">+3########## - Please enter a valid phone number.</div>
+                            <div ng-message="pattern">########## - Please enter a valid phone number.</div>
                         </div>
-                    </md-input-container>
-                    <md-input-container class="md-block">
-                        <label>Номер новой почты</label>
-                        <input name="mailNumber" ng-model="client.mailNumber">
                     </md-input-container>
                     <md-input-container class="md-block">
                         <label>Источник</label>

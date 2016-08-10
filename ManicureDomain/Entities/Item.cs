@@ -10,17 +10,18 @@ namespace ManicureDomain.Entities
     {
         public Item()
         {
-            Purchases = new System.Collections.Generic.List<Purchase>();
+            Purchases = new List<Purchase>();
         }
-        public string Name { get; set; }
-        public int Amount { get; set; }
+
+        public string Title { get; set; }
+        public int Stock { get; set; }
         public double OriginalPrice { get; set; }
         public double MarginalPrice { get; set; }
         public string AdditionalInformation { get; set; }
 
-        public virtual ICollection<Purchase> Purchases { get; set; }
-
         public int CategoryId { get; set; }
         public virtual Category Category { get; set; }
+
+        public virtual ICollection<Purchase> Purchases { get; set; }
     }
 }

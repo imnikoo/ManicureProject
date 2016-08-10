@@ -1,43 +1,50 @@
-﻿<div layout="row" layout-sm="column" layout-align="space-around" ng-show="!pageIsLoaded">
+﻿<div class="loading-progress" ng-show="!pageIsLoaded">
     <md-progress-circular md-mode="indeterminate"></md-progress-circular>
 </div>
-<div ng-show="pageIsLoaded">
+<div ng-show="pageIsLoaded" flex="">
     <md-content layout="column">
         <md-input-container class="search-container" style="margin: 0; margin-bottom: 4px; margin-top: 18px;">
             <label>Поиск</label>
-            <input ng-model="filterText">
+            <input ng-model="query.filterText" ng-keyup="performSearch(query)">
         </md-input-container>
-            <md-table-container>
-                <table md-table md-row-select="options.rowSelection" ng-model="selected" md-progress="promise">
-                    <thead md-head md-order="query.order" md-on-reorder="logOrder">
-                        <tr md-row>
-                            <th md-column md-order-by="id"><span>#</span></th>
-                            <th md-column md-order-by="name"><span>Наименование</span></th>
-                            <th md-column md-order-by="category.title"><span>Категория</span></th>
-                            <th md-column md-numeric md-order-by="amount"><span>Остаток</span></th>
-                            <th md-column md-numeric md-order-by="originalPrice"><span>Входящая цена (₴)</span></th>
-                            <th md-column md-numeric md-order-by="marginalPrice"><span>Продажная цена (₴)</span></th>
-                            <th md-column md-order-by="additionalInformation">
-                                <span>Дополнительная информация</span>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody md-body>
-                        <tr md-row md-select="item" md-auto-select="options.autoSelect" ng-repeat="item in items | filter: filterText | orderBy: query.order | limitTo: query.limit : (query.page -1) * query.limit">
-                            <td md-cell>{{item.id}}</td>
-                            <td md-cell ui-sref="item({ itemId : {{item.id}}})">{{item.name}}</td>
-                            <td md-cell>{{item.category.title}}</td>
-                            <td md-cell>{{item.amount}}{{calculateOrderedByUser(item)}}{{calculateOrderedByClients(item)}}</td>
-                            <td md-cell>{{item.originalPrice}}</td>
-                            <td md-cell>{{item.marginalPrice}}</td>
-                            <td md-cell>{{item.additionalInformation}}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </md-table-container>
-            <md-table-pagination md-limit="query.limit" md-page="query.page"
-                                 md-total="{{items.length}}"
-                                 md-page-select="options.pageSelector"
-                                 md-boundary-links="options.boundaryLinks"></md-table-pagination>
+        <md-table-container>
+            <table md-table md-row-select="options.rowSelection" ng-model="selectedItems" md-progress="promise">
+                <thead md-head md-order="query.order" md-on-reorder="logOrder">
+                    <tr md-row>
+                        <th md-column md-order-by="id"><span>#</span></th>
+                        <th md-column md-order-by="name"><span>Наименование</span></th>
+                        <th md-column md-order-by="category.title"><span>Категория</span></th>
+                        <th md-column md-numeric md-order-by="stock"><span>Остаток</span></th>
+                        <th md-column md-numeric md-order-by="originalPrice"><span>Входящая цена (₴)</span></th>
+                        <th md-column md-numeric md-order-by="marginalPrice"><span>Продажная цена (₴)</span></th>
+                        <th md-column md-order-by="additionalInformation">
+                            <span>Дополнительная информация</span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody md-body>
+                    <tr md-row md-on-select="select" md-on-deselect="deselect" ng-click="clickRow($event)" md-select="item" md-auto-select="options.autoSelect"
+                        ng-repeat="item in items | orderBy: query.order | limitTo: query.limit track by item.id">
+                        <td md-cell>{{item.id}}</td>
+                        <td md-cell><span ng-click="goToItem(item.id)">{{item.title}}</span></td>
+                        <td md-cell>{{item.category.title}}</td>
+                        <td md-cell>{{item.stock}}+{{item.orderedByUser}}</td>
+                        <td md-cell>{{item.originalPrice | currency:""}}</td>
+                        <td md-cell>{{item.marginalPrice | currency:""}}</td>
+                        <td md-cell>{{item.additionalInformation}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </md-table-container>
+        <md-table-pagination md-limit="query.limit" md-page="query.page" md-total="{{queryResult.total}}" md-page-select="options.pageSelector"
+            md-boundary-links="options.boundaryLinks" md-on-paginate="getItems"></md-table-pagination>
+        <div>
+            <md-button class="md-warn md-raised" ng-click="select($event)">
+                Отменить
+            </md-button>
+            <md-button class="md-primary md-raised" ng-disabled="!selectedItems" ng-click="goToNextStage()">
+                Продолжить
+            </md-button>
+        </div>
     </md-content>
 </div>

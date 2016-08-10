@@ -1,0 +1,122 @@
+<md-content layout="row">
+    <div flex="">
+        <div ng-switch on="stage">
+            <div ng-switch-when="1">
+                <md-button class="md-primary md-raised" ng-click="goNext()">
+                    Новый клиент
+                </md-button>
+                <md-button class="md-primary md-raised" ng-click="goNext()">
+                    Из существующих
+                </md-button>
+                <md-button class="md-primary md-raised" ng-click="goNext()">
+                    Пропустить
+                </md-button>
+            </div>
+            <div ng-switch-when="2">
+                <div class="second-stage-view">
+                    <md-card id="tableCard">
+                        <div class="table-container">
+                            <table class="ordered-items-table">
+                                <thead>
+                                    <th style="">#</th>
+                                    <th>Товар</th>
+                                    <th>Количество</th>
+                                    <th>Цена (₴)</th>
+                                    <th style="text-align: right">Сумма (₴)</th>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="orderedItem in orderedItems track by $index">
+                                        <td>{{$index + 1}}</td>
+                                        <td>{{orderedItem.item.title}}</td>
+                                        <td>{{orderedItem.quantity}}</td>
+                                        <td>{{orderedItem.item.marginalPrice | currency:""}}</td>
+                                        <td style="text-align: right">{{calculateSumOf(orderedItem) | currency:""}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <md-button class="md-primary md-raised" ng-click="toChosenItems()">
+                                                К товару
+                                            </md-button>
+                                        </td>
+                                        <td>
+                                            <md-button class="md-primary md-raised" ng-click="goNext()">
+                                                Дальше
+                                            </md-button>
+                                        </td>
+                                        <td></td>
+                                        <td></td>
+                                        <td class="sum-cell">Σ {{sum | currency:""}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </md-card>
+                    <div>
+                        <md-card>
+                            <form name="secondStageOrderForm">
+                                <md-input-container class="md-block">
+                                    <label>Скидка</label>
+                                    <input name="discount" ng-model="discount" ng-keyup="calculateToPay(discount)">
+                                </md-input-container>
+                                <md-input-container class="md-block">
+                                    <label>Оплачено</label>
+                                    <input name="alreadyPaid" ng-model="alreadyPaid" type="number" ng-keyup="calculateAlreadyPaid(alreadyPaid)">
+                                </md-input-container>
+                                <md-input-container class="md-block">
+                                    <label>К оплате</label>
+                                    <input name="toPay" ng-model="toPay" type="number" ng-disabled="true">
+                                </md-input-container>
+                            </form>
+                        </md-card>
+                    </div>
+                </div>
+            </div>
+            <div ng-switch-when="3">
+                <md-card>
+                    <form name="thirdOrderForm">
+                        <md-input-container class="md-block">
+                            <label ng-bind="getClientsFullName(order.client)">Клиент</label>
+                            <input ng-disabled="true" name="client">
+                            <md-button class="md-primary md-raised" ng-click="chooseClient()">
+                                Выбрать клиента
+                            </md-button>
+                        </md-input-container>
+                        <md-input-container class="md-block reciever-block">
+                            <label>Получатель</label>
+                            <input name="reciever" ng-model="order.reciever">
+                        </md-input-container>
+                        <md-autocomplete style="margin-bottom: 26px" md-selected-item-change="updateCityId()" md-selected-item="order.city" md-search-text="searchCity"
+                            md-items="city in querySearch(searchCity)" md-item-text="city.title" md-min-length="0" placeholder="Город">
+                            <md-item-template>
+                                <span md-highlight-text="searchCity" md-highlight-flags="^i">{{city.title}}</span>
+                            </md-item-template>
+                            <md-not-found>
+                                Города - "{{searchCity}}" нет.
+                                <a ng-click="">Клик, чтобы создать!</a>
+                            </md-not-found>
+                        </md-autocomplete>
+                        <md-input-container class="md-block">
+                            <label>Телефон получателя</label>
+                            <input required name="phoneNumber" ng-model="order.phoneNumber" ng-pattern="/\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/">
+                            <div class="hint" ng-show="showHints">+3(###)###-##-##</div>
+                            <div ng-messages="thirdOrderForm.phoneNumber.$error" ng-hide="showHints">
+                                <div ng-message="pattern">########## - Please enter a valid phone number.</div>
+                            </div>
+                        </md-input-container>
+                        <md-input-container class="md-block">
+                            <label>Отделение новой почты</label>
+                            <input name="phoneNumber" type="number" ng-model="order.mailNumber">
+                        </md-input-container>
+                        <md-input-container class="md-block">
+                            <label>Дополнительная информация</label>
+                            <textarea name="additionalInformation" ng-model="order.additionalInformation" md-maxlength="150" rows="5" md-select-on-focus=""></textarea>
+                        </md-input-container>
+                    </form>
+                    <md-button class="md-primary md-raised" ng-click="">
+                        Сохранить
+                    </md-button>
+                </md-card>
+            </div>
+        </div>
+    <div>
+</md-content>

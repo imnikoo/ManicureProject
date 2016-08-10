@@ -13,7 +13,7 @@ namespace Dataa.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201605171310567_init"; }
+            get { return "201608070827500_init"; }
         }
         
         string IMigrationMetadata.Source

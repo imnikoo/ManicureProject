@@ -13,6 +13,7 @@ namespace ManicureProject
         {
             GlobalConfiguration.Configure(WebApiConfig.Register);
             AutofacDependencyConfiguration.Initialize(GlobalConfiguration.Configuration);
+            AutomapperWebConfiguration.Configure();
         }
     }
 }

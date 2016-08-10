@@ -14,6 +14,7 @@ namespace Dataa.Migrations
                         Id = c.Int(nullable: false, identity: true),
                         Title = c.String(),
                         IsDeleted = c.Boolean(nullable: false),
+                        CreatedAt = c.DateTime(),
                     })
                 .PrimaryKey(t => t.Id);
             
@@ -24,6 +25,7 @@ namespace Dataa.Migrations
                         Id = c.Int(nullable: false, identity: true),
                         Title = c.String(),
                         IsDeleted = c.Boolean(nullable: false),
+                        CreatedAt = c.DateTime(),
                     })
                 .PrimaryKey(t => t.Id);
             
@@ -32,17 +34,18 @@ namespace Dataa.Migrations
                 c => new
                     {
                         Id = c.Int(nullable: false, identity: true),
-                        Name = c.String(),
+                        FirstName = c.String(),
+                        LastName = c.String(),
                         PhoneNumber = c.String(),
-                        MailNumber = c.Int(nullable: false),
                         Source = c.String(),
                         AdditionalInformation = c.String(),
-                        City_Id = c.Int(),
+                        CityId = c.Int(),
+                        CreatedAt = c.DateTime(),
                         IsDeleted = c.Boolean(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.City", t => t.City_Id)
-                .Index(t => t.City_Id);
+                .ForeignKey("dbo.City", t => t.CityId)
+                .Index(t => t.CityId);
             
             CreateTable(
                 "dbo.Order",
@@ -52,14 +55,21 @@ namespace Dataa.Migrations
                         Sum = c.Double(nullable: false),
                         AlreadyPaid = c.Double(nullable: false),
                         ToPay = c.Double(nullable: false),
-                        Discount = c.Double(nullable: false),
+                        Discount = c.String(),
+                        MailNumber = c.Int(nullable: false),
                         State = c.Int(nullable: false),
                         AdditionalInformation = c.String(),
+                        CityId = c.Int(nullable: false),
+                        Reciever = c.String(),
+                        PhoneNumber = c.String(),
                         ClientId = c.Int(nullable: false),
+                        CreatedAt = c.DateTime(),
                         IsDeleted = c.Boolean(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.City", t => t.CityId, cascadeDelete: true)
                 .ForeignKey("dbo.Client", t => t.ClientId, cascadeDelete: true)
+                .Index(t => t.CityId)
                 .Index(t => t.ClientId);
             
             CreateTable(
@@ -68,28 +78,29 @@ namespace Dataa.Migrations
                     {
                         Id = c.Int(nullable: false, identity: true),
                         Quantity = c.Int(nullable: false),
-                        Price = c.Double(nullable: false),
-                        OrderId = c.Int(nullable: false),
                         ItemId = c.Int(nullable: false),
+                        CreatedAt = c.DateTime(),
+                        Order_Id = c.Int(nullable: false),
                         IsDeleted = c.Boolean(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Item", t => t.ItemId, cascadeDelete: true)
-                .ForeignKey("dbo.Order", t => t.OrderId, cascadeDelete: true)
-                .Index(t => t.OrderId)
-                .Index(t => t.ItemId);
+                .ForeignKey("dbo.Order", t => t.Order_Id, cascadeDelete: true)
+                .Index(t => t.ItemId)
+                .Index(t => t.Order_Id);
             
             CreateTable(
                 "dbo.Item",
                 c => new
                     {
                         Id = c.Int(nullable: false, identity: true),
-                        Name = c.String(),
-                        Amount = c.Int(nullable: false),
+                        Title = c.String(),
+                        Stock = c.Int(nullable: false),
                         OriginalPrice = c.Double(nullable: false),
                         MarginalPrice = c.Double(nullable: false),
                         AdditionalInformation = c.String(),
                         CategoryId = c.Int(nullable: false),
+                        CreatedAt = c.DateTime(),
                         IsDeleted = c.Boolean(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)
@@ -107,14 +118,16 @@ namespace Dataa.Migrations
                         ApproximateArrivalDate = c.DateTime(),
                         ArrivalDate = c.DateTime(),
                         IsArrived = c.Boolean(nullable: false),
-                        PlaceId = c.Int(nullable: false),
+                        TrackNumber = c.String(),
+                        PurchasePlaceId = c.Int(nullable: false),
                         ItemId = c.Int(nullable: false),
+                        CreatedAt = c.DateTime(),
                         IsDeleted = c.Boolean(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.PurchasePlace", t => t.PlaceId, cascadeDelete: true)
+                .ForeignKey("dbo.PurchasePlace", t => t.PurchasePlaceId, cascadeDelete: true)
                 .ForeignKey("dbo.Item", t => t.ItemId, cascadeDelete: true)
-                .Index(t => t.PlaceId)
+                .Index(t => t.PurchasePlaceId)
                 .Index(t => t.ItemId);
             
             CreateTable(
@@ -124,6 +137,7 @@ namespace Dataa.Migrations
                         Id = c.Int(nullable: false, identity: true),
                         Title = c.String(),
                         IsDeleted = c.Boolean(nullable: false),
+                        CreatedAt = c.DateTime(),
                     })
                 .PrimaryKey(t => t.Id);
             
@@ -132,19 +146,21 @@ namespace Dataa.Migrations
         public override void Down()
         {
             DropForeignKey("dbo.Order", "ClientId", "dbo.Client");
-            DropForeignKey("dbo.OrderItem", "OrderId", "dbo.Order");
+            DropForeignKey("dbo.OrderItem", "Order_Id", "dbo.Order");
             DropForeignKey("dbo.OrderItem", "ItemId", "dbo.Item");
             DropForeignKey("dbo.Purchase", "ItemId", "dbo.Item");
-            DropForeignKey("dbo.Purchase", "PlaceId", "dbo.PurchasePlace");
+            DropForeignKey("dbo.Purchase", "PurchasePlaceId", "dbo.PurchasePlace");
             DropForeignKey("dbo.Item", "CategoryId", "dbo.Category");
-            DropForeignKey("dbo.Client", "City_Id", "dbo.City");
+            DropForeignKey("dbo.Order", "CityId", "dbo.City");
+            DropForeignKey("dbo.Client", "CityId", "dbo.City");
             DropIndex("dbo.Purchase", new[] { "ItemId" });
-            DropIndex("dbo.Purchase", new[] { "PlaceId" });
+            DropIndex("dbo.Purchase", new[] { "PurchasePlaceId" });
             DropIndex("dbo.Item", new[] { "CategoryId" });
+            DropIndex("dbo.OrderItem", new[] { "Order_Id" });
             DropIndex("dbo.OrderItem", new[] { "ItemId" });
-            DropIndex("dbo.OrderItem", new[] { "OrderId" });
             DropIndex("dbo.Order", new[] { "ClientId" });
-            DropIndex("dbo.Client", new[] { "City_Id" });
+            DropIndex("dbo.Order", new[] { "CityId" });
+            DropIndex("dbo.Client", new[] { "CityId" });
             DropTable("dbo.PurchasePlace");
             DropTable("dbo.Purchase");
             DropTable("dbo.Item");

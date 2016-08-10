@@ -1,0 +1,58 @@
+﻿<div class="loading-progress" ng-show="!pageIsLoaded">
+    <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+</div>
+<div ng-show="pageIsLoaded" flex="">
+    <md-content layout="column">
+        <md-input-container class="search-container" style="margin: 0; margin-bottom: 4px; margin-top: 18px;">
+            <label>Поиск</label>
+            <input ng-model="query.filterText" ng-keyup="performSearch(query)">
+        </md-input-container>
+        <md-table-container>
+            <table md-table md-row-select="options.rowSelection" ng-model="selectedOrders" md-progress="promise">
+                <thead md-head md-order="query.order" md-on-reorder="logOrder">
+                    <tr md-row>
+                        <th md-column md-order-by="id"><span>#</span></th>
+                        <th md-column md-order-by="client.lastName"><span>Клиент</span></th>
+                        <th md-column md-order-by="items.length"><span>Товар</span></th>
+                        <th md-column md-numeric md-order-by="sum"><span>Сумма</span></th>
+                        <th md-column md-numeric md-order-by="toPay"><span>К оплате</span></th>
+                        <th md-column md-order-by="additionalInformation">
+                            <span>Дополнительная информация</span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody md-body class="order-table">
+                    <tr md-row ng-click="clickRow($event)" md-select="item" md-auto-select="options.autoSelect"
+                        ng-repeat="order in orders | orderBy: query.order | limitTo: query.limit track by order.id">
+                        <td md-cell>{{order.id}}</td>
+                        <td md-cell><span ng-click="goToItem(item.id)">{{order.client.firstName + ' ' + order.client.lastName}}</span></td>
+                        <td md-cell class="items-td">
+                            <md-card class="items-card">
+                                <div ng-repeat="orderItem in orderItemsToShow(order.items)">
+                                    <span>{{orderItem.item.title}}</span>
+                                    <span>{{orderItem.quantity}}</span>
+                                </div>
+                                <span ng-if="order.items.length > 3">..{{order.items.length - 3}}</span> 
+                            </md-card>
+                        </td>
+                        <td md-cell>{{order.sum | currency:""}}</td>
+                        <td md-cell>{{order.toPay | currency:""}}</td>
+                        <td md-cell>{{order.additionalInformation}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </md-table-container>
+        <md-table-pagination md-limit="query.limit" md-page="query.page" md-total="{{queryResult.total}}" md-page-select="options.pageSelector"
+            md-boundary-links="options.boundaryLinks" md-on-paginate="getItems"></md-table-pagination>
+        <div>
+            <md-button class="md-warn md-raised" ng-click="select($event)">
+                Отменить
+            </md-button>
+            <md-button class="md-primary md-raised" ng-disabled="!selectedItems" ng-click="goToNextStage()">
+                Продолжить
+            </md-button>
+        </div>
+
+    </md-content>
+
+</div>

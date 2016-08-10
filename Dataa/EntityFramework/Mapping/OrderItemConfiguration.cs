@@ -11,7 +11,6 @@ namespace Dataa.EntityFramework.Mapping
     {
         public OrderItemConfiguration()
         {
-            HasRequired(x => x.Order).WithMany().HasForeignKey(x => x.OrderId);
             HasRequired(x => x.Item).WithMany().HasForeignKey(x => x.ItemId);
         }
     }

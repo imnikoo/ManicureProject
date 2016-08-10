@@ -14,17 +14,22 @@ import table from 'angular-material-data-table'
 import _ from 'lodash'
 
 import config from './botConfig';
+import CacheService from './services/cacheService';
 import HttpService from './services/httpService';
 import ClientService from './services/clientService';
 import ItemService from './services/itemService';
+import OrderService from './services/orderService';
+
 
 var dependencies = [router, material, animate, aria, table, messages];
 
 angular
     .module('Manicure', dependencies)
     .constant('_', _)
+    .service('CacheService', CacheService)
     .service('HttpService', HttpService)
     .service('ClientService', ClientService)
     .service('ItemService', ItemService)
+    .service('OrderService', OrderService)
     .config(config)
 
