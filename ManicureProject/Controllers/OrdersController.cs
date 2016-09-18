@@ -40,6 +40,7 @@ namespace ManicureProject.Controllers
         }
 
         [HttpGet]
+        [Route("{id}")]
         public IHttpActionResult Get(int id)
         {
             var foundedEntity = _service.Get(id);

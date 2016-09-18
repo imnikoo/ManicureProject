@@ -10,8 +10,8 @@ export default class ItemService {
         'ngInject';
         this.CacheService = CacheService;
         this.HttpService = HttpService;
-         _ItemService = this;
-         this.$q = $q;
+        _ItemService = this;
+        this.$q = $q;
     }
 
     getPurchasePlaces() {
@@ -26,7 +26,7 @@ export default class ItemService {
             return queryResult;
         });
     }
-	
+
     getItem(id) {
         var prefix = ITEM_URL + id;
         return this.HttpService.get(prefix).then(value => {
@@ -42,15 +42,16 @@ export default class ItemService {
     getCategories() {
         return this.CacheService.get(CATEGORIES_URL);
     }
-	
-    saveItem(item){
+
+    saveItem(item) {
+        debugger;
         _transformBack(item);
-        if(item.id !== undefined){
+        if (item.id !== undefined) {
             var prefix = ITEM_URL + item.id;
             return this.HttpService.put(prefix, item);
         }
-        else{
-            var prefix =  ITEM_URL;
+        else {
+            var prefix = ITEM_URL;
             return this.HttpService.post(prefix, item);
         }
     }
@@ -82,7 +83,6 @@ function _updateBackPurchasePlaces(item) {
             return purchase;
         });
     }
-    debugger;
     return item;
 }
 
@@ -100,9 +100,9 @@ function _transform(item) {
 
 function _fillWithPurchasePlaces(item) {
     _ItemService.getPurchasePlaces().then(purchasePlaces => {
-        if(item.purchases.length) {
+        if (item.purchases.length) {
             item.purchases = _.map(item.purchases, (purchase) => {
-                purchase.purchasePlace = _.find(purchasePlaces, { 'id' : purchase.purchasePlaceId });
+                purchase.purchasePlace = _.find(purchasePlaces, { 'id': purchase.purchasePlaceId });
            	    return purchase;
             });
         }
@@ -111,11 +111,11 @@ function _fillWithPurchasePlaces(item) {
 }
 
 function _fillWithCategories(item) {
-        _ItemService.getCategories().then(categories => {
-            let itemCategory = _.find(categories, { 'id': item.categoryId });
-            item.category = itemCategory;
-        });
-        return item;
+    _ItemService.getCategories().then(categories => {
+        let itemCategory = _.find(categories, { 'id': item.categoryId });
+        item.category = itemCategory;
+    });
+    return item;
 }
 
 function _fillWithAmountOfOrderedByCustomers(item) {
@@ -123,7 +123,7 @@ function _fillWithAmountOfOrderedByCustomers(item) {
 }
 
 function _fillWithAmountOfOrderedByUser(item) {
-    if(item.purchases.length) {
+    if (item.purchases.length) {
         item.orderedByUser = _.reduce(item.purchases, (purchaseCount, purchase) => {
             return purchaseCount + purchase.amount;
         }, 0);

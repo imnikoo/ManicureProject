@@ -7,7 +7,7 @@ namespace ManicureDomain.Entities
     {
         public Order()
         {
-
+            Items = new List<OrderItem>();
         }
 
         public double Sum { get; set; }

@@ -28,7 +28,7 @@
                         <td md-cell>{{item.id}}</td>
                         <td md-cell><span ng-click="goToItem(item.id)">{{item.title}}</span></td>
                         <td md-cell>{{item.category.title}}</td>
-                        <td md-cell>{{item.stock}}+{{item.orderedByUser}}</td>
+                        <td md-cell><span>{{item.stock}}<span ng-if="item.orderedByUser">+{{item.orderedByUser}}</span></span></td>
                         <td md-cell>{{item.originalPrice | currency:""}}</td>
                         <td md-cell>{{item.marginalPrice | currency:""}}</td>
                         <td md-cell>{{item.additionalInformation}}</td>

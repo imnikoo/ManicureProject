@@ -2,11 +2,10 @@
 	'ngInject';
 	var vm = $scope;
 	vm.pageIsLoaded = false;
-    vm.title = "Загрузка.."
     vm.items = [];
-	vm.itemCount = $stateParams.orderedItems ? $stateParams.orderedItems : [];
 	vm.selectedItems = [];
-	console.log(vm.selectedItems, 'popali');
+	vm.itemCount = $stateParams.order ? $stateParams.order.items : [];
+	vm.isOrderCase = $stateParams.isOrderCase ? true : false;
 
     vm.options = $stateParams.options ? $stateParams.options : {
         autoSelect: false,
@@ -55,7 +54,6 @@
 				);
 			}
 		});
-		console.log(vm.selectedItems, 'dobavili');
 	};
 
 	vm.getItems = (page, limit) => {
@@ -67,7 +65,15 @@
 		if (!page) {
             query = vm.query;
         }
-		vm.performSearch(query);
+		vm.performSearch(query).then(() => {
+			if(vm.itemCount.length) {
+				_.forEach(vm.items, item => {
+					if(_.some(vm.itemCount, { itemId: item.id})) {
+						vm.selectedItems.push(item);
+					}
+				});
+			}
+		});
 	};
 
 	vm.performSearch = (query) => {
@@ -77,20 +83,45 @@
 				'total': value.total,
 			};
 			vm.pageIsLoaded = true;
-			vm.selectedItems = vm.itemCount.length ? _.filter(vm.items, (item) => {
-				return _.some(_.map(vm.itemCount, (itemCountPair) => {
-					return itemCountPair.item;
-				}), { id: item.id });
-			}) : [];
 		});
+		return vm.promise;
 	};
 
     vm.goToItem = (itemId) => {
-        $state.go('item', { itemId, page: vm.query.page });
+		if (!vm.isOrderCase) {
+			$state.go('item', { itemId, page: vm.query.page });
+		}
     };
 
 	vm.goToNextStage = () => {
-		$state.go('createOrder', { stage: 2, orderedItems: vm.itemCount });
+		let orderedItems = _.map(vm.itemCount, (itemQuantityPair) => {
+			return {
+				id: itemQuantityPair.id,
+				item: itemQuantityPair.item,
+				itemId: itemQuantityPair.item.id,
+				quantity: itemQuantityPair.quantity
+			};
+		});
+		let order = {};
+		if($stateParams.order) {
+			order = $stateParams.order;
+			order.items = orderedItems;
+		} else {
+			order = {
+				sum: 0,
+				discount: 0,
+				alreadyPaid: 0,
+				toPay: 0,
+				mailNumber: null,
+				additionalInformation: null,
+				cityId: null,
+				reciever: null,
+				phoneNumber: null,
+				clientId: null,
+				items: orderedItems
+			};
+		}
+		$state.go('createOrder', { stage: 2, order: order });
 	};
 
     vm.getItems();

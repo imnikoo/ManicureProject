@@ -53,7 +53,8 @@ export default function _config($stateProvider, $urlRouterProvider,$locationProv
             params: {
                 page: null,
                 options: null,
-                orderedItems: null
+                order: null,
+                isOrderCase: null
             }
         })
         .state('item', {

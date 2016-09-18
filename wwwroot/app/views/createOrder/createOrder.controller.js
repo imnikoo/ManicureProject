@@ -1,18 +1,23 @@
 export default function CreateOrderController($state,
     $scope,
-    $stateParams,
+    $stateParams, 
+    $mdDialog, 
+    $mdMedia,
     ClientService,
     OrderService) {
     'ngInject';
     var vm = $scope;
 
+     vm.getClientsFullName = function (client) {
+        if (client) {
+            return client.firstName + ' ' + client.lastName;
+        }
+        return 'Клиент';
+    };
+
     vm.stage = parseInt($stateParams.stage ? $stateParams.stage : 1);
-    debugger;
-    vm.sum = 0;
-    vm.discount = 0;
+    vm.discount = "";
     vm.amountOfDiscount = 0;
-    vm.toPay = 0;
-    vm.alreadyPaid = 0;
     vm.orderState = 1;
 
     vm.cities = [];
@@ -31,31 +36,63 @@ export default function CreateOrderController($state,
         rowSelection: true,
         multiSelect: true,
     };
-    init();
+    vm.calculateToPay = (calledFromAlreadyPaidContext) => {
+        let discount = vm.order.discount;
+        var percentPattern = new RegExp('.%');
+        var digitPattern = new RegExp('[0-9]');
+        var letterPattern = new RegExp('[a-zA-Z]');
 
-    vm.getClientsFullName = (client) => {
-        if (client) {
-            return client.firstName + ' ' + client.lastName;
+        if (digitPattern.test(discount) && !letterPattern.test(discount)) {
+            if (percentPattern.test(discount)) {
+                vm.order.amountOfDiscount = _.round(vm.order.sum * discount.split('%')[0] / 100);
+            } else {
+                vm.order.amountOfDiscount = discount;
+            }
+            vm.order.toPay = _.round(vm.order.sum - vm.order.amountOfDiscount);
+            if (vm.order.alreadyPaid && !calledFromAlreadyPaidContext) {
+                vm.order.toPay =_.round(vm.order.toPay - vm.order.alreadyPaid);
+            }
         }
-        return 'Клиент';
+        if (!discount.length) {
+            vm.order.toPay = vm.order.sum;
+        }
     };
 
+     vm.calculateAlreadyPaid = () => {
+        let alreadyPaid = vm.order.alreadyPaid;
+        if (!alreadyPaid) {
+            if (vm.order.sum !== vm.order.toPay) {
+                vm.calculateToPay(false);
+            } else {
+                vm.order.toPay = vm.order.sum;
+            }
+        } else if (vm.order.sum !== vm.order.toPay) {
+            vm.calculateToPay(true);
+            vm.order.toPay = _.round(vm.order.toPay - alreadyPaid);
+        } else {
+            vm.order.toPay = _.round(vm.order.sum - alreadyPaid);
+        }
+    };
+    init();
     function init() {
         switch (vm.stage) {
             case (1): {
-                $state.go('items', { options: vm.orderOptions });
+                $state.go('items', { options: vm.orderOptions, isOrderCase: true });
                 break;
             }
             case (2): {
                 debugger;
-                vm.orderedItems = $stateParams.orderedItems;
-                vm.sum = _.reduce($stateParams.orderedItems, (orderSum, orderItem) => {
+                vm.order = $stateParams.order ? $stateParams.order : {}; 
+                vm.order.sum = _.reduce(vm.order.items, (orderSum, orderItem) => {
                     return orderSum + orderItem.item.marginalPrice * orderItem.quantity;
                 }, 0);
-                vm.toPay = vm.sum;
+                vm.order.toPay = vm.order.sum;
+                vm.calculateAlreadyPaid();
+                vm.calculateToPay();
                 break;
             }
             case (3): {
+                debugger;
                 getCities();
                 vm.order = $stateParams.order;
                 if (vm.order.client) {
@@ -81,51 +118,37 @@ export default function CreateOrderController($state,
         }
     };
 
-    vm.calculateToPay = (discount, calledFromAlreadyPaidContext) => {
-        vm.discount = discount;
-        var percentPattern = new RegExp('.%');
-        var digitPattern = new RegExp('[0-9]');
-        var letterPattern = new RegExp('[a-zA-Z]');
-
-        if (digitPattern.test(discount) && !letterPattern.test(discount)) {
-            if (percentPattern.test(discount)) {
-                vm.amountOfDiscount = vm.sum * discount.split('%')[0] / 100;
-            } else {
-                vm.amountOfDiscount = discount;
-            }
-            vm.toPay = vm.sum - vm.amountOfDiscount;
-            if (vm.alreadyPaid && !calledFromAlreadyPaidContext) {
-                vm.toPay = vm.toPay - vm.alreadyPaid;
-            }
-        }
-        if (!discount.length) {
-            vm.toPay = vm.sum;
-        }
-    };
+    vm.toOrder = (order) => {
+        $state.go('createOrder', { stage: 2, order: vm.order });
+    }
 
     vm.chooseClient = () => {
         $state.go('clients', { options: vm.orderOptions, order: vm.order });
     }
+    vm.saveOrder = (order) => {
+        OrderService.saveOrder(order).then(() => {
+            $state.go('orders');
+        });
+    };
 
-    vm.calculateAlreadyPaid = (alreadyPaid) => {
-        vm.alreadyPaid = alreadyPaid;
-        if (!alreadyPaid) {
-            if (vm.sum !== vm.toPay) {
-                vm.calculateToPay(vm.discount, false);
-            } else {
-                vm.toPay = vm.sum;
-            }
-        } else if (vm.sum !== vm.toPay) {
-            vm.calculateToPay(vm.discount, true);
-            vm.toPay = vm.toPay - alreadyPaid;
-        } else {
-            vm.toPay = vm.sum - alreadyPaid;
-        }
-
+    vm.deleteOrder = (order) => {
+        var confirm = $mdDialog.confirm()
+          .title('Удалить заказ?')
+          .ok('OK')
+          .cancel('Отменить');
+        $mdDialog.show(confirm).then(() => {
+            OrderService.deleteOrder(order).then(() => {
+                $state.go('orders');
+            });
+        });
     };
 
     vm.toChosenItems = () => {
-        $state.go('items', { options: vm.orderOptions, orderedItems: vm.orderedItems });
+        $state.go('items', { 
+            options: vm.orderOptions, 
+            order: vm.order, 
+            isOrderCase: true 
+        });
     };
 
     vm.calculateSumOf = (orderedItem) => {
@@ -134,21 +157,8 @@ export default function CreateOrderController($state,
 
     vm.goNext = () => {
         if (vm.stage === 2) {
-            vm.order = {
-                sum: vm.sum,
-                discount: vm.discount,
-                alreadyPaid: vm.alreadyPaid,
-                toPay: vm.toPay,
-                mailNumber: null,
-                additionalInformation: null,
-                cityId: null,
-                reciever: null,
-                phoneNumber: null,
-                clientId: null,
-                items: vm.orderedItems
-            }
+            $state.go('createOrder', { stage: vm.stage + 1, order: vm.order });
         }
-        $state.go('createOrder', { stage: vm.stage + 1, order: vm.order });
     }
 
     vm.querySearch = (query) => {

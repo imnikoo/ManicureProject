@@ -18,8 +18,6 @@ $mdDialog, $mdMedia,
     vm.orderPlaceTitle = {};
 
     vm.pageOfList = _.clone($stateParams.page);
-    console.log($stateParams, 'params');
-    console.log(vm.pageOfList);
 
     vm.options = {
         autoSelect: false,
@@ -58,7 +56,9 @@ $mdDialog, $mdMedia,
 
     vm.confirmOrder = () => {
         _isPurchaseValid().then(() => {
-            let approxArriveDate = new Date(vm.purchase.orderDate).setDate(approxArriveDate.getDate() + 30);
+            let approxArriveDate = new Date();
+            approxArriveDate.setDate(vm.purchase.orderDate.getDate() + 30);
+            debugger;
             let newPurchase = {
                 pricePerPiece: vm.purchase.pricePerPiece,
                 amount: vm.purchase.amount,
@@ -66,7 +66,8 @@ $mdDialog, $mdMedia,
                 orderDate: vm.purchase.orderDate,
                 purchasePlace: JSON.parse(vm.purchase.place),
                 approximateArrivalDate: approxArriveDate,
-                trackNumber: vm.purchase.trackNumber
+                trackNumber: vm.purchase.trackNumber,
+                itemId: vm.item.id
             };
             vm.item.purchases.push(newPurchase);
             vm.purchase = {};
@@ -87,7 +88,7 @@ $mdDialog, $mdMedia,
 
     vm.calculateAndPasteMarginalPrice = () => {
         if (vm.item.originalPrice) {
-            vm.item.marginalPrice = parseFloat((vm.item.originalPrice * 1.5).toFixed(2));
+            vm.item.marginalPrice = parseFloat((vm.item.originalPrice * 2).toFixed(2));
         }
     }
 
@@ -124,7 +125,7 @@ $mdDialog, $mdMedia,
     }
 
     vm.saveItemAndBack = () => {
-        saveItem().then(() => {
+        vm.saveItem().then(() => {
             goBack();
         });
     }
@@ -165,7 +166,7 @@ $mdDialog, $mdMedia,
         return results;
     }
 
-    vm.createFilterFor = (query) => {
+    function createFilterFor (query) {
         var lowercaseQuery = angular.lowercase(query);
         return function filterFn(category) {
             return (category.title.toLowerCase().indexOf(lowercaseQuery) === 0);

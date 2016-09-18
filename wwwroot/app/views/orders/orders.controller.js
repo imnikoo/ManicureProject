@@ -21,7 +21,6 @@
     };
 
 	vm.orderItemsToShow = (items) => {
-		debugger;
 		let quantity = items[0].quantity;
 		let isOrderWithTheSameOrderedQuantities = true;
 		_.forEach(items, (orderItem)=> {
@@ -65,8 +64,9 @@
 		});
 	};
 
-    vm.goToOrder = (orderId) => {
-        //$state.go('item', { orderId, page: vm.query.page });
+    vm.goToOrder = (order) => {
+		debugger;
+        $state.go('createOrder', { stage: 2, order: order });
     };
     vm.getOrders();
 }

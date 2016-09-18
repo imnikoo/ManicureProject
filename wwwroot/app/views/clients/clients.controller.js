@@ -27,6 +27,7 @@ export default function ClientsController($state, $mdDialog, $stateParams, $scop
         .then(() => {
             vm.orderToGoBack.clientId = selectedClient.id;
             vm.orderToGoBack.client = selectedClient;
+            debugger;
             $state.go('createOrder', { stage: 3, order: vm.orderToGoBack });
         })
         .catch(() => {

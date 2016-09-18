@@ -19,7 +19,7 @@ export default class HttpService {
     }
 	 
     remove(prefix, entity){
-        this.ajax('delete', prefix, entity);
+        return this.ajax('delete', prefix, entity);
 	 }
 
     ajax(method, prefix, entity) {

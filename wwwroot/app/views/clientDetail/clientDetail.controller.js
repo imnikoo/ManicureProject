@@ -52,15 +52,12 @@ export default function ClientController(
         var confirm = $mdDialog.confirm()
             .title('Прет')
             .textContent('Вы изменили клиента и выходите. Выйти?')
-            .ariaLabel('Оооо..')
             .targetEvent(ev)
             .ok('Выйти')
             .cancel('Отмена');
 
-        $mdDialog.show(confirm).then(function () {
+        $mdDialog.show(confirm).then(() => {
             $state.go('clients');
-        }, function () {
-
         });
     }
 
@@ -79,8 +76,6 @@ export default function ClientController(
 
     }
     function querySearch(query) {
-        console.log(vm.client);
-        console.log(query);
         var results = query ? vm.cities.filter(createFilterFor(query)) : vm.cities,
             deferred;
         return results;

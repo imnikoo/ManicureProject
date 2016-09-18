@@ -45,7 +45,6 @@ export default class OrderService {
     }
 
     saveOrder(entity) {
-        //TODO: transform back
         if (entity.id) {
             var prefix = ORDER_URL + entity.id;
             return this.HttpService.put(prefix, entity);
@@ -57,8 +56,8 @@ export default class OrderService {
     }
 
     deleteOrder(entity) {
-        var prefix = ORDER_URL + entity.Id;
-        this.HttpService.remove(prefix, entity);
+        var prefix = ORDER_URL + entity.id;
+        return this.HttpService.remove(prefix, entity);
     }
 }
 

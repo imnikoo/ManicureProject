@@ -71,7 +71,11 @@
     flex-grow: 3;
 }
 
-
+.order-buttons-container {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+}
 
 .sum-cell {
     text-align: right !important;

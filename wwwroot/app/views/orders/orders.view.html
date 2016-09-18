@@ -25,7 +25,7 @@
                     <tr md-row ng-click="clickRow($event)" md-select="item" md-auto-select="options.autoSelect"
                         ng-repeat="order in orders | orderBy: query.order | limitTo: query.limit track by order.id">
                         <td md-cell>{{order.id}}</td>
-                        <td md-cell><span ng-click="goToItem(item.id)">{{order.client.firstName + ' ' + order.client.lastName}}</span></td>
+                        <td md-cell><span ng-click="goToOrder(order)">{{order.client.firstName + ' ' + order.client.lastName}}</span></td>
                         <td md-cell class="items-td">
                             <md-card class="items-card">
                                 <div ng-repeat="orderItem in orderItemsToShow(order.items)">

@@ -25,7 +25,7 @@
                                     <th style="text-align: right">Сумма (₴)</th>
                                 </thead>
                                 <tbody>
-                                    <tr ng-repeat="orderedItem in orderedItems track by $index">
+                                    <tr ng-repeat="orderedItem in order.items track by $index">
                                         <td>{{$index + 1}}</td>
                                         <td>{{orderedItem.item.title}}</td>
                                         <td>{{orderedItem.quantity}}</td>
@@ -45,7 +45,7 @@
                                         </td>
                                         <td></td>
                                         <td></td>
-                                        <td class="sum-cell">Σ {{sum | currency:""}}</td>
+                                        <td class="sum-cell">Σ {{order.sum | currency:""}}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -56,15 +56,15 @@
                             <form name="secondStageOrderForm">
                                 <md-input-container class="md-block">
                                     <label>Скидка</label>
-                                    <input name="discount" ng-model="discount" ng-keyup="calculateToPay(discount)">
+                                    <input name="discount" ng-model="order.discount" ng-keyup="calculateToPay()">
                                 </md-input-container>
                                 <md-input-container class="md-block">
                                     <label>Оплачено</label>
-                                    <input name="alreadyPaid" ng-model="alreadyPaid" type="number" ng-keyup="calculateAlreadyPaid(alreadyPaid)">
+                                    <input name="alreadyPaid" ng-model="order.alreadyPaid" type="number" ng-keyup="calculateAlreadyPaid()">
                                 </md-input-container>
                                 <md-input-container class="md-block">
                                     <label>К оплате</label>
-                                    <input name="toPay" ng-model="toPay" type="number" ng-disabled="true">
+                                    <input name="toPay" ng-model="order.toPay" type="number" ng-disabled="true">
                                 </md-input-container>
                             </form>
                         </md-card>
@@ -112,11 +112,22 @@
                             <textarea name="additionalInformation" ng-model="order.additionalInformation" md-maxlength="150" rows="5" md-select-on-focus=""></textarea>
                         </md-input-container>
                     </form>
-                    <md-button class="md-primary md-raised" ng-click="">
-                        Сохранить
-                    </md-button>
                 </md-card>
+                <div class="order-buttons-container">
+                    <md-button class="md-primary md-raised" ng-click="toOrder(order)">
+                        К заказу 
+                    </md-button>
+                    <md-button class="md-primary md-raised" ng-click="saveOrder(order)">
+                        Сохранить заказ
+                    </md-button>
+                    <md-button class="md-primary md-raised" ng-click="endOrder(order)">
+                        Заказ завершен
+                    </md-button>
+                    <md-button class="md-raised md-warn" ng-click="deleteOrder(order)">
+                        Удалить
+                    </md-button>
+                </div>
             </div>
         </div>
-    <div>
+    </div>
 </md-content>

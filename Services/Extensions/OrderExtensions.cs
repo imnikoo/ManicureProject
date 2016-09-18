@@ -17,6 +17,8 @@ namespace Services.Extensions
             destination.Discount = source.Discount;
             destination.MailNumber = source.MailNumber;
             destination.State = source.State;
+            destination.Sum = source.Sum;
+            destination.ToPay = source.ToPay;
 
             source.Items.Where(x => x.Id == 0).ToList().ForEach(newOrderItem =>
             {
@@ -29,10 +31,6 @@ namespace Services.Extensions
                 if (domainOrder == null)
                 {
                     throw new System.Exception();
-                }
-                if (domainOrder.IsDeleted == true)
-                {
-                    destination.Items.ToList().Remove(domainOrder);
                 }
                 else
                 {
