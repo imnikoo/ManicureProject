@@ -1,6 +1,7 @@
 ﻿using Dataa.EntityFramework.Repositories;
 using ManicureDomain.Abstract;
 using System.Data.Entity;
+using System;
 
 namespace Data.EntityFramework.Infrastructure
 {
@@ -15,6 +16,7 @@ namespace Data.EntityFramework.Infrastructure
         private IOrderRepository _orderRepository;
         private IPurchasePlaceRepository _purchasePlaceRepository;
         private IPurchaseRepository _purchaseRepository;
+        private IOrderItemRepository _orderItemRepository;
 
         public UnitOfWork(DbContext context)
         {
@@ -114,6 +116,18 @@ namespace Data.EntityFramework.Infrastructure
                 }
 
                 return _purchaseRepository;
+            }
+        }
+
+        public IOrderItemRepository OrderItemRepository
+        {
+            get
+            {
+                if(_orderItemRepository == null)
+                {
+                    _orderItemRepository = new OrderItemRepository(context);
+                }
+                return _orderItemRepository;
             }
         }
 

@@ -25,7 +25,7 @@
                                     <th style="text-align: right">Сумма (₴)</th>
                                 </thead>
                                 <tbody>
-                                    <tr ng-repeat="orderedItem in order.items track by $index">
+                                    <tr ng-if="!orderedItem.removed" ng-repeat="orderedItem in order.items track by $index">
                                         <td>{{$index + 1}}</td>
                                         <td>{{orderedItem.item.title}}</td>
                                         <td>{{orderedItem.quantity}}</td>
@@ -85,15 +85,19 @@
                             <label>Получатель</label>
                             <input name="reciever" ng-model="order.reciever">
                         </md-input-container>
-                        <md-autocomplete style="margin-bottom: 26px" md-selected-item-change="updateCityId()" md-selected-item="order.city" md-search-text="searchCity"
-                            md-items="city in querySearch(searchCity)" md-item-text="city.title" md-min-length="0" placeholder="Город">
+                        <md-autocomplete md-input-name="cityInput" flex="" required=""
+                        md-input-minlength="0" md-input-maxlength="18" 
+                            md-selected-item="order.city"
+                            md-search-text="searchCity" 
+                            md-items="city in querySearch(searchCity)" 
+                            md-item-text="city.title"
+                            md-floating-label="Город">
                             <md-item-template>
-                                <span md-highlight-text="searchCity" md-highlight-flags="^i">{{city.title}}</span>
+                                <span md-highlight-text="searchCity">{{city.title}}</span>
                             </md-item-template>
-                            <md-not-found>
-                                Города - "{{searchCity}}" нет.
-                                <a ng-click="">Клик, чтобы создать!</a>
-                            </md-not-found>
+                            <div ng-messages="thirdOrderForm.cityInput.$error" ng-if="thirdOrderForm.cityInput.$touched">
+                                <div ng-message="required">Выбери <b>город</b></div>
+                            </div>
                         </md-autocomplete>
                         <md-input-container class="md-block">
                             <label>Телефон получателя</label>
@@ -115,7 +119,7 @@
                 </md-card>
                 <div class="order-buttons-container">
                     <md-button class="md-primary md-raised" ng-click="toOrder(order)">
-                        К заказу 
+                        К заказу
                     </md-button>
                     <md-button class="md-primary md-raised" ng-click="saveOrder(order)">
                         Сохранить заказ

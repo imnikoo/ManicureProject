@@ -186,6 +186,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\ClientQueryModel.cs" />
+    <Compile Include="Models\ItemNameModel.cs" />
     <Compile Include="Models\ItemQueryModel.cs" />
     <Compile Include="Models\OrderQueryModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

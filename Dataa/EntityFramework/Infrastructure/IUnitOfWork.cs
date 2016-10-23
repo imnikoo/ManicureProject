@@ -11,6 +11,7 @@ namespace Data.EntityFramework.Infrastructure
         IOrderRepository OrderRepository { get; }
         IPurchasePlaceRepository PurchasePlaceRepository { get; }
         IPurchaseRepository PurchaseRepository { get; }
+        IOrderItemRepository OrderItemRepository { get; }
 
         void Commit();
     }

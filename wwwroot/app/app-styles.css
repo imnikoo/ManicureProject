@@ -101,3 +101,13 @@
     font-size: 13px;
     text-align: left;
 }
+
+.payed {
+    background-color: rgba(green, 0.7);
+}
+.pre-payed {
+    background-color: orange;
+}
+.closed {
+    background-color: lightgrey;
+}

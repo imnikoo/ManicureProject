@@ -44,6 +44,7 @@
     <Compile Include="Abstract\ICityRepository.cs" />
     <Compile Include="Abstract\IClientRepository.cs" />
     <Compile Include="Abstract\IItemRepository.cs" />
+    <Compile Include="Abstract\IOrderItemRepository.cs" />
     <Compile Include="Abstract\IOrderRepository.cs" />
     <Compile Include="Abstract\IPurchasePlaceRepository.cs" />
     <Compile Include="Abstract\IPurchaseRepository.cs" />

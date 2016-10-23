@@ -63,9 +63,18 @@
 			vm.pageIsLoaded = true;
 		});
 	};
+	vm.getOrderClass = (order) => {
+		if(order.state === 3) {
+			return 'payed';
+		} else if(order.state === 2) {
+			return 'pre-payed';
+		} else if(order.state === 4) {
+			return 'closed';
+		}
+		return '';
+	}
 
     vm.goToOrder = (order) => {
-		debugger;
         $state.go('createOrder', { stage: 2, order: order });
     };
     vm.getOrders();

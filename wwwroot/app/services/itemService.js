@@ -2,6 +2,7 @@
 const ORDER_URL = 'orders/'
 const CATEGORIES_URL = 'categories/'
 const PLACES_URL = 'PurchasePlaces/'
+const CHECK_NAME_URL = 'CheckName/';
 
 let _ItemService;
 
@@ -27,6 +28,22 @@ export default class ItemService {
         });
     }
 
+    saveCategory(category) {
+        this.CacheService.clearCache(CATEGORIES_URL);
+        if (category.id !== undefined) {
+            var ending = CATEGORIES_URL + category.id;
+            return this.HttpService.put(ending, category);
+        } else {
+            var ending = CATEGORIES_URL + category.id;
+            return this.HttpService.post(ending, category);
+        }
+    }
+
+    checkName(name) {
+        var route = ITEM_URL + CHECK_NAME_URL;
+        return this.HttpService.post(route, { name });
+    }
+
     getItem(id) {
         var prefix = ITEM_URL + id;
         return this.HttpService.get(prefix).then(value => {
@@ -44,7 +61,6 @@ export default class ItemService {
     }
 
     saveItem(item) {
-        debugger;
         _transformBack(item);
         if (item.id !== undefined) {
             var prefix = ITEM_URL + item.id;
@@ -103,7 +119,7 @@ function _fillWithPurchasePlaces(item) {
         if (item.purchases.length) {
             item.purchases = _.map(item.purchases, (purchase) => {
                 purchase.purchasePlace = _.find(purchasePlaces, { 'id': purchase.purchasePlaceId });
-           	    return purchase;
+                return purchase;
             });
         }
     });

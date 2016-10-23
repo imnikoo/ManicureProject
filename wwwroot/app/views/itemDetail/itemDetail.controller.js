@@ -1,6 +1,6 @@
 ﻿
-export default function ItemDetailController($state, $scope, $q, $stateParams, 
-$mdDialog, $mdMedia,
+export default function ItemDetailController($state, $scope, $q, $stateParams,
+    $mdDialog, $mdMedia,
     ItemService) {
     'ngInject';
     var vm = $scope;
@@ -49,16 +49,23 @@ $mdDialog, $mdMedia,
 
     function _isPurchaseValid() {
         let deffered = $q.defer();
-        let comparingResult =  vm.purchase.pricePerPiece && vm.purchase.amount && vm.purchase.place && vm.purchase.orderDate;
+        let comparingResult = vm.purchase.pricePerPiece && vm.purchase.amount && vm.purchase.place && vm.purchase.orderDate;
         deffered.resolve(comparingResult);
         return deffered.promise;
+    }
+    vm.checkName = (name) => {
+        ItemService.checkName(name).then(itemId => {
+            if (itemId) {
+                vm.sameNameItemId = itemId;
+            }
+            console.log(itemId);
+        })
     }
 
     vm.confirmOrder = () => {
         _isPurchaseValid().then(() => {
             let approxArriveDate = new Date();
             approxArriveDate.setDate(vm.purchase.orderDate.getDate() + 30);
-            debugger;
             let newPurchase = {
                 pricePerPiece: vm.purchase.pricePerPiece,
                 amount: vm.purchase.amount,
@@ -119,7 +126,7 @@ $mdDialog, $mdMedia,
             .ok('Выйти')
             .cancel('Отмена');
 
-        $mdDialog.show(confirm).then(function () {
+        $mdDialog.show(confirm).then(() => {
             goBack();
         });
     }
@@ -135,7 +142,21 @@ $mdDialog, $mdMedia,
     }
 
     vm.saveItem = () => {
-        return ItemService.saveItem(vm.item);
+        return (() => {
+            if (!vm.item.category) {
+                var chosenCategory = _.find(vm.categories, ['title', vm.searchCategory]);
+                if (chosenCategory) {
+                    vm.item.category = chosenCategory;
+                } else {
+                    return ItemService.saveCategory({ title: vm.searchCategory }).then((value) => {
+                        vm.item.category = value;
+                        vm.item.categoryId = value.id;
+                    })
+                }
+            }
+        })().then(() => {
+            return ItemService.saveItem(vm.item);
+        });
     }
 
     vm.getItem = (itemId) => {
@@ -166,7 +187,7 @@ $mdDialog, $mdMedia,
         return results;
     }
 
-    function createFilterFor (query) {
+    function createFilterFor(query) {
         var lowercaseQuery = angular.lowercase(query);
         return function filterFn(category) {
             return (category.title.toLowerCase().indexOf(lowercaseQuery) === 0);

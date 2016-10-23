@@ -24,6 +24,10 @@
 
 	vm.deselect = (item) => {
 		vm.itemCount = _.filter(vm.itemCount, (selectedItem) => {
+			if (selectedItem.item.id === item.id && selectedItem.id) {
+				selectedItem.removed = true;
+				return true;
+			}
 			return selectedItem.item.id !== item.id;
 		});
 	}
@@ -65,15 +69,7 @@
 		if (!page) {
             query = vm.query;
         }
-		vm.performSearch(query).then(() => {
-			if(vm.itemCount.length) {
-				_.forEach(vm.items, item => {
-					if(_.some(vm.itemCount, { itemId: item.id})) {
-						vm.selectedItems.push(item);
-					}
-				});
-			}
-		});
+		vm.performSearch(query);
 	};
 
 	vm.performSearch = (query) => {
@@ -83,7 +79,15 @@
 				'total': value.total,
 			};
 			vm.pageIsLoaded = true;
-		});
+		}).then(() => {
+			if(vm.itemCount.length) {
+				_.forEach(vm.items, item => {
+					if(_.some(vm.itemCount, { itemId: item.id})) {
+						vm.selectedItems.push(item);
+					}
+				});
+			}
+		});;
 		return vm.promise;
 	};
 
@@ -99,7 +103,8 @@
 				id: itemQuantityPair.id,
 				item: itemQuantityPair.item,
 				itemId: itemQuantityPair.item.id,
-				quantity: itemQuantityPair.quantity
+				quantity: itemQuantityPair.quantity,
+				removed: itemQuantityPair.removed
 			};
 		});
 		let order = {};

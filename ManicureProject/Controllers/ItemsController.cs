@@ -24,6 +24,18 @@ namespace ManicureProject.Controllers
             _service = service;
         }
 
+
+        [HttpPost]
+        [Route("checkName")]
+        public IHttpActionResult CheckName([FromBody]ItemNameModel nameModel)
+        {
+            if(!ModelState.IsValid)
+            {
+                return Json(ModelState.Errors(), PROJECT_SERIALIZER_SETTINGS);
+            }
+            return Json(_service.CheckName(nameModel.Name), PROJECT_SERIALIZER_SETTINGS);
+        }
+
         [HttpPost]
         [Route("query")]
         public IHttpActionResult Get([FromBody]ItemQueryModel query)

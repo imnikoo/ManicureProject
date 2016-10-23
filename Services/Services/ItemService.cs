@@ -22,7 +22,25 @@ namespace Services.Services
             var entity = uow.ItemRepository.GetByID(id);
             return DTOService.ToDTO<Item, ItemDTO>(entity);
         }
+        public int? CheckName(string itemName)
+        {
+            List<Expression<Func<Item, bool>>> predicates = new List<Expression<Func<Item, bool>>>();
 
+            if (!String.IsNullOrEmpty(itemName))
+            {
+                var wordsOfName = itemName.Split(' ');
+                wordsOfName.ToList().ForEach(word =>
+                {
+                    predicates.Add(item => item.Title.Contains(word));
+                });
+                var items = uow.ItemRepository.Get(predicates).ToList();
+                if(items.Any())
+                {
+                    return items.First().Id;
+                }
+            }
+            return null;
+        }
         public Tuple<IEnumerable<ItemDTO>, int> Get(int page, int perPage, string filterText)
         {
             List<Expression<Func<Item, bool>>> predicates = new List<Expression<Func<Item, bool>>>();
@@ -54,7 +72,7 @@ namespace Services.Services
             uow.Commit();
             return DTOService.ToDTO<Item, ItemDTO>(newItem);
         }
-
+        
         public ItemDTO Update(ItemDTO entity)
         {
             Item _Item = uow.ItemRepository.GetByID(entity.Id);

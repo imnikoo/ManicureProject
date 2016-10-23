@@ -80,6 +80,7 @@
     <Compile Include="EntityFramework\Repositories\CityRepository.cs" />
     <Compile Include="EntityFramework\Repositories\ClientRepository.cs" />
     <Compile Include="EntityFramework\Repositories\ItemRepository.cs" />
+    <Compile Include="EntityFramework\Repositories\OrderItemRepository.cs" />
     <Compile Include="EntityFramework\Repositories\OrderRepository.cs" />
     <Compile Include="EntityFramework\Repositories\PurchasePlaceRepository.cs" />
     <Compile Include="EntityFramework\Repositories\PurchaseRepository.cs" />
@@ -90,6 +91,7 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Migrations\DummyData.cs" />
+    <Compile Include="Migrations\ManicureContextInitializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

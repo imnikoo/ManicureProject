@@ -1,32 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
+	<meta charset="UTF-8">
 </head>
+
 <body ng-app="Manicure">
-    <md-toolbar>
-        <div class="md-toolbar-tools">
-            <md-button ui-sref="home">
-                Домашная
-            </md-button>
-            <md-button ui-sref="clients">
-                Клиенты
-            </md-button>
-            <md-button ui-sref="items">
-                Товар
-            </md-button>
-            <md-button ui-sref="orders">
-                Заказы
-            </md-button>
-                <md-button ui-sref="client({clientId: null})">
-                Добавить клиента
-            </md-button>
-                <md-button ui-sref="createOrder">
-                Создать заказ
-            </md-button>
-        </div>
-    </md-toolbar>
-    <div ui-view class="main-view"></div>
-    <script src="/bundle.js"></script>
+	<md-toolbar>
+		<div class="md-toolbar-tools">
+			<md-button ui-sref="clients">
+				Клиенты
+			</md-button>
+			<md-button class="md-raised" ui-sref="client({clientId: null})">
+				Добавить клиента
+			</md-button>
+			<md-button ui-sref="items">
+				Товар
+			</md-button>
+			<md-button class="md-raised" ui-sref="item({itemId: null})">
+				Добавить товар
+			</md-button>
+			<md-button ui-sref="orders">
+				Заказы
+			</md-button>
+			<md-button class="md-raised" ui-sref="createOrder">
+				Создать заказ
+			</md-button>
+		</div>
+	</md-toolbar>
+	<div ui-view class="main-view"></div>
+	<script src="/bundle.js"></script>
 </body>
+
 </html>

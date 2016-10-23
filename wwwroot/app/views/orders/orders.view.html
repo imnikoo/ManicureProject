@@ -22,7 +22,8 @@
                     </tr>
                 </thead>
                 <tbody md-body class="order-table">
-                    <tr md-row ng-click="clickRow($event)" md-select="item" md-auto-select="options.autoSelect"
+                    <tr ng-class="getOrderClass(order)"
+                        md-row ng-click="clickRow($event)" md-select="item" md-auto-select="options.autoSelect"
                         ng-repeat="order in orders | orderBy: query.order | limitTo: query.limit track by order.id">
                         <td md-cell>{{order.id}}</td>
                         <td md-cell><span ng-click="goToOrder(order)">{{order.client.firstName + ' ' + order.client.lastName}}</span></td>

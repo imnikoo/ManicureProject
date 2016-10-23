@@ -1,142 +1,143 @@
 ﻿<div class="loading-progress" ng-show="!pageIsLoaded">
-    <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+	<md-progress-circular md-mode="indeterminate"></md-progress-circular>
 </div>
 <div class="item-details">
-    <div ng-show="pageIsLoaded">
-        <md-content layout="row">
-            <div flex="">
-                <md-card>
-                    <form name="itemForm">
-                        <label>Категория</label>
-                        <md-autocomplete md-selected-item="item.category" md-search-text="searchCategory" md-items="category in querySearch(searchCategory)"
-                            md-item-text="category.title" md-min-length="0" placeholder="">
-                            <md-item-template>
-                                <span md-highlight-text="searchCategory" md-highlight-flags="^i">{{category.title}}</span>
-                            </md-item-template>
-                            <md-not-found>
-                                Категории - "{{searchCategory}}" нет.
-                                <a ng-click="">Клик, чтобы создать!</a>
-                            </md-not-found>
-                        </md-autocomplete>
-                        <md-input-container class="md-block">
-                            <label>Наименование</label>
-                            <input required name="title" ng-model="item.title">
-                            <div ng-messages="itemForm.title.$error">
-                                <div ng-message="required">
-                                    Введи <b>название предмета</b>
-                                </div>
-                            </div>
-                        </md-input-container>
-                        <md-input-container class="md-block">
-                            <label>Остаток</label>
-                            <input name="amount" type="number" ng-model="item.stock">
-                        </md-input-container>
-                        <md-input-container class="md-block">
-                            <label>Входящая цена (₴)</label>
-                            <input required="" ng-keyup="calculateAndPasteMarginalPrice()" name="originalPrice" type=number ng-model="item.originalPrice">
-                            <div ng-messages="itemForm.originalPrice.$error">
-                                <div ng-message="required">
-                                    Нужно ввести <b>цену</b>
-                                </div>
-                            </div>
-                        </md-input-container>
-                        <md-input-container class="md-block">
-                            <label>Продажная цена (₴) {{ item.originalPrice && item.marginalPrice ? 'с наценкой в '+markUp()+'%' : ''}}</label>
-                            <input required="" name="marginalPrice" type=number ng-model="item.marginalPrice">
-                            <div ng-messages="itemForm.marginalPrice.$error">
-                                <div ng-message="required">
-                                    Нужно ввести <b>цену</b>
-                                </div>
-                            </div>
-                        </md-input-container>
-                        <md-input-container class="md-block">
-                            <label>Дополнительная информация</label>
-                            <textarea name="additionalInformation" ng-model="item.additionalInformation" md-maxlength="150" rows="5" md-select-on-focus=""></textarea>
-                        </md-input-container>
-                        <md-button class="md-primary md-raised" ng-disabled="!itemForm.$valid" ng-click="saveItemAndBack()">
-                            Сохранить и выйти
-                        </md-button>
-                        <md-button class="md-primary md-raised" ng-click="checkAndWarn($event)">
-                            Назад
-                        </md-button>
-                    </form>
-                </md-card>
-                <md-card>
-                    <div>
-                        <md-button class="md-primary md-raised" ng-click="tooglePurchases()">
-                            {{showPurchases ? 'Скрыть заказы' : 'Показать мои заказы'}}
-                        </md-button>
-                        <md-button class="md-primary md-raised" ng-click="toogleOrder()">
-                            Оформить заказ
-                        </md-button>
-                    </div>
-                    <div class="item-order" ng-show="showItemOrder">
-                        <md-input-container class="md-block">
-                            <label>Цена за единицу товара (₴)</label>
-                            <input name="pricePerPiece" type=number ng-model="purchase.pricePerPiece">
-                        </md-input-container>
-                        <md-input-container class="md-block">
-                            <label>Количество</label>
-                            <input name="amount" type=number ng-model="purchase.amount">
-                        </md-input-container>
-                        <md-input-container class="md-block">
-                            <label>Место заказа</label>
-                            <!--<select  ng-if="" ng-options="place.title for place in purchasePlaces" ng-model="purchase.place"></select> !-->
-                            <md-select ng-model="purchase.place">
-                                <md-option ng-repeat="place in purchasePlaces" value="{{place}}">
-                                    {{place.title}}
-                                </md-option>
-                            </md-select>
-                        </md-input-container>
-                         <md-input-container class="md-block">
-                            <label>Track number</label>
-                            <input name="trackNumber" ng-model="purchase.trackNumber">
-                        </md-input-container>
-                        <div>
-                            <label>Дата заказа</label><br>
-                            <md-datepicker ng-model="purchase.orderDate" md-placeholder="Выбери дату"></md-datepicker>
-                            <md-button class="md-primary md-raised" ng-click="confirmOrder()">
-                                Подтвердить заказ
-                            </md-button>
-                        </div>
-                    </div>
-                    <div class="purchases-container" ng-show="showPurchases">
-                        <md-table-container>
-                            <table md-table md-row-select="options.rowSelection" ng-model="selected" md-progress="promise">
-                                <thead md-head md-order="query.order" md-on-reorder="logOrder">
-                                    <tr md-row>
-                                        <th md-column md-numeric md-order-by="pricePerPiece"><span>Цена</span></th>
-                                        <th md-column md-numeric md-order-by="amount"><span>Количество заказа</span></th>
-                                        <th md-column md-order-by="purchasePlace.title"><span>Место</span></th>
-                                        <th md-column md-numeric md-order-by="orderDate"><span>Дата заказа</span></th>
-                                        <th md-column md-numeric md-order-by="approximateArrivalDate"><span>Приблизительная дата прибытия</span></th>
-                                        <th md-column md-order-by="trackNumber"><span>Track number</span></th>
-                                        <th md-column md-order-by="isArrived">
-                                            <span>Поступил</span>
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody md-body>
-                                    <tr md-row md-select="purchase" md-auto-select="options.autoSelect" ng-repeat="purchase in item.purchases | orderBy: query.order | limitTo: query.limit : (query.page -1) * query.limit track by $index">
-                                        <td md-cell>{{purchase.pricePerPiece}}</td>
-                                        <td md-cell>{{purchase.amount}}</td>
-                                        <td md-cell>{{purchase.purchasePlace.title}}</td>
-                                        <td md-cell>{{purchase.orderDate | date : "dd.MM.yy"}} </td>
-                                        <td md-cell>{{purchase.approximateArrivalDate | date : "dd.MM.yy"}}</td>
-                                        <td md-cell>{{purchase.trackNumber}}</td>
-                                        <td md-cell>
-                                            <md-checkbox ng-disabled="" class="red" aria-label="purchase Arrival" ng-model="purchase.isArrived">
-                                            </md-checkbox>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </md-table-container>
-                        <md-table-pagination md-limit="query.limit" md-page="query.page" md-total="{{item.purchases.length ? item.purchases.length : 0 }}" md-page-select="options.pageSelector"
-                            md-boundary-links="options.boundaryLinks"></md-table-pagination>
-                    </div>
-                </md-card>
-            </div>
-        </md-content>
-    </div>
+	<div ng-show="pageIsLoaded">
+		<md-content layout="row">
+			<div flex="">
+				<md-card>
+					<form name="itemForm">
+						<md-autocomplete md-input-name="categoryInput" flex="" required="" md-input-minlength="0" md-input-maxlength="18"
+							md-selected-item="item.category" md-search-text="searchCategory" 
+                            md-items="category in querySearch(searchCategory)"
+							md-item-text="category.title" 
+                            md-floating-label="Категория">
+							<md-item-template>
+								<span md-highlight-text="searchCategory">{{category.title}}</span>
+							</md-item-template>
+							<div ng-messages="itemForm.categoryInput.$error" ng-if="itemForm.categoryInput.$touched">
+								<div ng-message="required">Выбери <b>категорию</b></div>
+							</div>
+						</md-autocomplete>
+						<md-input-container class="md-block">
+							<label>Наименование</label>
+							<input ng-blur="checkName(item.title)" required name="title" ng-model="item.title">
+							<div ng-messages="itemForm.title.$error">
+								<div ng-message="required">
+									Введи <b>название предмета</b>
+								</div>
+							</div>
+						</md-input-container>
+						<md-input-container class="md-block">
+							<label>Остаток</label>
+							<input name="amount" type="number" ng-model="item.stock">
+						</md-input-container>
+						<md-input-container class="md-block">
+							<label>Входящая цена (₴)</label>
+							<input required="" ng-keyup="calculateAndPasteMarginalPrice()" name="originalPrice" type=number ng-model="item.originalPrice">
+							<div ng-messages="itemForm.originalPrice.$error">
+								<div ng-message="required">
+									Нужно ввести <b>цену</b>
+								</div>
+							</div>
+						</md-input-container>
+						<md-input-container class="md-block">
+							<label>Продажная цена (₴) {{ item.originalPrice && item.marginalPrice ? 'с наценкой в '+markUp()+'%' : ''}}</label>
+							<input required="" name="marginalPrice" type=number ng-model="item.marginalPrice">
+							<div ng-messages="itemForm.marginalPrice.$error">
+								<div ng-message="required">
+									Нужно ввести <b>цену</b>
+								</div>
+							</div>
+						</md-input-container>
+						<md-input-container class="md-block">
+							<label>Дополнительная информация</label>
+							<textarea name="additionalInformation" ng-model="item.additionalInformation" md-maxlength="150" rows="5" md-select-on-focus=""></textarea>
+						</md-input-container>
+						<md-button class="md-primary md-raised" ng-disabled="!itemForm.$valid" ng-click="saveItemAndBack()">
+							Сохранить и выйти
+						</md-button>
+						<md-button class="md-primary md-raised" ng-click="checkAndWarn($event)">
+							Назад
+						</md-button>
+					</form>
+				</md-card>
+				<md-card>
+					<div>
+						<md-button class="md-primary md-raised" ng-click="tooglePurchases()">
+							{{showPurchases ? 'Скрыть заказы' : 'Показать мои заказы'}}
+						</md-button>
+						<md-button class="md-primary md-raised" ng-click="toogleOrder()">
+							Оформить заказ
+						</md-button>
+					</div>
+					<div class="item-order" ng-show="showItemOrder">
+						<md-input-container class="md-block">
+							<label>Цена за единицу товара (₴)</label>
+							<input name="pricePerPiece" type=number ng-model="purchase.pricePerPiece">
+						</md-input-container>
+						<md-input-container class="md-block">
+							<label>Количество</label>
+							<input name="amount" type=number ng-model="purchase.amount">
+						</md-input-container>
+						<md-input-container class="md-block">
+							<label>Место заказа</label>
+							<!--<select  ng-if="" ng-options="place.title for place in purchasePlaces" ng-model="purchase.place"></select> !-->
+							<md-select ng-model="purchase.place">
+								<md-option ng-repeat="place in purchasePlaces" value="{{place}}">
+									{{place.title}}
+								</md-option>
+							</md-select>
+						</md-input-container>
+						<md-input-container class="md-block">
+							<label>Track number</label>
+							<input name="trackNumber" ng-model="purchase.trackNumber">
+						</md-input-container>
+						<div>
+							<label>Дата заказа</label><br>
+							<md-datepicker ng-model="purchase.orderDate" md-placeholder="Выбери дату"></md-datepicker>
+							<md-button class="md-primary md-raised" ng-click="confirmOrder()">
+								Подтвердить заказ
+							</md-button>
+						</div>
+					</div>
+					<div class="purchases-container" ng-show="showPurchases">
+						<md-table-container>
+							<table md-table md-row-select="options.rowSelection" ng-model="selected" md-progress="promise">
+								<thead md-head md-order="query.order" md-on-reorder="logOrder">
+									<tr md-row>
+										<th md-column md-numeric md-order-by="pricePerPiece"><span>Цена</span></th>
+										<th md-column md-numeric md-order-by="amount"><span>Количество заказа</span></th>
+										<th md-column md-order-by="purchasePlace.title"><span>Место</span></th>
+										<th md-column md-numeric md-order-by="orderDate"><span>Дата заказа</span></th>
+										<th md-column md-numeric md-order-by="approximateArrivalDate"><span>Приблизительная дата прибытия</span></th>
+										<th md-column md-order-by="trackNumber"><span>Track number</span></th>
+										<th md-column md-order-by="isArrived">
+											<span>Поступил</span>
+										</th>
+									</tr>
+								</thead>
+								<tbody md-body>
+									<tr md-row md-select="purchase" md-auto-select="options.autoSelect" ng-repeat="purchase in item.purchases | orderBy: query.order | limitTo: query.limit : (query.page -1) * query.limit track by $index">
+										<td md-cell>{{purchase.pricePerPiece}}</td>
+										<td md-cell>{{purchase.amount}}</td>
+										<td md-cell>{{purchase.purchasePlace.title}}</td>
+										<td md-cell>{{purchase.orderDate | date : "dd.MM.yy"}} </td>
+										<td md-cell>{{purchase.approximateArrivalDate | date : "dd.MM.yy"}}</td>
+										<td md-cell>{{purchase.trackNumber}}</td>
+										<td md-cell>
+											<md-checkbox ng-disabled="" class="red" aria-label="purchase Arrival" ng-model="purchase.isArrived">
+											</md-checkbox>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</md-table-container>
+						<md-table-pagination md-limit="query.limit" md-page="query.page" md-total="{{item.purchases.length ? item.purchases.length : 0 }}"
+							md-page-select="options.pageSelector" md-boundary-links="options.boundaryLinks"></md-table-pagination>
+					</div>
+				</md-card>
+			</div>
+		</md-content>
+	</div>
 </div>

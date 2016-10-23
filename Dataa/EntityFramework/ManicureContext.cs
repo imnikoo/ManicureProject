@@ -1,4 +1,5 @@
 ﻿using Dataa.EntityFramework.Mapping;
+using Dataa.Migrations;
 using ManicureDomain.Entities;
 using System;
 using System.Collections.Generic;
@@ -20,14 +21,13 @@ namespace Data.EntityFramework
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItem { get; set; }
 
-
         public DbSet<Category> Categories { get; set; }
         public DbSet<City> Cities { get; set; }
         public DbSet<PurchasePlace> PurchasePlaces { get; set; }
 
         public ManicureContext() : base()
         {
-
+            Database.SetInitializer<ManicureContext>(new ManicureContextInitializer());
         }
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

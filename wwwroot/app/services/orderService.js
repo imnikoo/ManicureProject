@@ -20,6 +20,17 @@ export default class OrderService {
         return this.CacheService.get(CITIES_URL);
     }
 
+    saveCity(city) {
+        this.CacheService.clearCache(CITIES_URL);
+        if (city.id !== undefined) {
+            var route = CITIES_URL + city.id;
+            return this.HttpService.put(route, city);
+        } else {
+            var route = CITIES_URL + city.id;
+            return this.HttpService.post(route, city);
+        }
+    }
+
     getOrders(query) {
         let correctQuery = _correctPages(query);
         var prefix = ORDER_URL + 'query/';

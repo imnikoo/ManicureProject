@@ -11,6 +11,7 @@ namespace Services.Extensions
         public static void Update(this Order destination, OrderDTO source, IUnitOfWork uow)
         {
             destination.AdditionalInformation = source.AdditionalInformation;
+            destination.State = source.State;
             destination.AlreadyPaid = source.AlreadyPaid;
             destination.CityId = source.CityId;
             destination.ClientId = source.ClientId;
@@ -19,6 +20,9 @@ namespace Services.Extensions
             destination.State = source.State;
             destination.Sum = source.Sum;
             destination.ToPay = source.ToPay;
+            destination.Reciever = source.Reciever;
+            destination.PhoneNumber = source.PhoneNumber;
+
 
             source.Items.Where(x => x.Id == 0).ToList().ForEach(newOrderItem =>
             {
@@ -31,6 +35,10 @@ namespace Services.Extensions
                 if (domainOrder == null)
                 {
                     throw new System.Exception();
+                }
+                if(updatedOrderItem.Removed)
+                {
+                    uow.OrderItemRepository.Delete(updatedOrderItem.Id);
                 }
                 else
                 {
