@@ -16,6 +16,7 @@
                         <th md-column md-order-by="items.length"><span>Товар</span></th>
                         <th md-column md-numeric md-order-by="sum"><span>Сумма</span></th>
                         <th md-column md-numeric md-order-by="toPay"><span>К оплате</span></th>
+                        <th md-column md-numeric md-order-by="alreadyPaid"><span>Оплачено</span></th>
                         <th md-column md-order-by="additionalInformation">
                             <span>Дополнительная информация</span>
                         </th>
@@ -38,6 +39,7 @@
                         </td>
                         <td md-cell>{{order.sum | currency:""}}</td>
                         <td md-cell>{{order.toPay | currency:""}}</td>
+                        <td md-cell>{{order.alreadyPaid | currency:""}}</td>
                         <td md-cell>{{order.additionalInformation}}</td>
                     </tr>
                 </tbody>
@@ -45,15 +47,5 @@
         </md-table-container>
         <md-table-pagination md-limit="query.limit" md-page="query.page" md-total="{{queryResult.total}}" md-page-select="options.pageSelector"
             md-boundary-links="options.boundaryLinks" md-on-paginate="getItems"></md-table-pagination>
-        <div>
-            <md-button class="md-warn md-raised" ng-click="select($event)">
-                Отменить
-            </md-button>
-            <md-button class="md-primary md-raised" ng-disabled="!selectedItems" ng-click="goToNextStage()">
-                Продолжить
-            </md-button>
-        </div>
-
     </md-content>
-
 </div>

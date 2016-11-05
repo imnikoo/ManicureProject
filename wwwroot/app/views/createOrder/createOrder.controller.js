@@ -17,10 +17,10 @@ export default function CreateOrderController(
         return 'Клиент';
     };
     const ORDER_STATES = {
-        Opened: 1,
-        PrePayed: 2,
-        Payed: 3,
-        Closed: 4
+        Opened: 0,
+        PrePayed: 1,
+        Payed: 2,
+        Closed: 3
     }
 
     vm.stage = parseInt($stateParams.stage ? $stateParams.stage : 1);
@@ -57,9 +57,9 @@ export default function CreateOrderController(
                 vm.order.amountOfDiscount = discount;
             }
             vm.order.toPay = _.round(vm.order.sum - vm.order.amountOfDiscount);
-            if (vm.order.alreadyPaid && !calledFromAlreadyPaidContext) {
+            /*if (vm.order.alreadyPaid && !calledFromAlreadyPaidContext) {
                 vm.order.toPay = _.round(vm.order.toPay - vm.order.alreadyPaid);
-            }
+            }*/
         }
         if (!discount.length) {
             vm.order.toPay = vm.order.sum;
@@ -67,7 +67,7 @@ export default function CreateOrderController(
     };
 
     vm.calculateAlreadyPaid = () => {
-        let alreadyPaid = vm.order.alreadyPaid;
+        /*let alreadyPaid = vm.order.alreadyPaid;
         if (!alreadyPaid) {
             if (vm.order.sum !== vm.order.toPay) {
                 vm.calculateToPay(false);
@@ -79,7 +79,7 @@ export default function CreateOrderController(
             vm.order.toPay = _.round(vm.order.toPay - alreadyPaid);
         } else {
             vm.order.toPay = _.round(vm.order.sum - alreadyPaid);
-        }
+        }*/
     };
     (() => {
         switch (vm.stage) {
@@ -101,7 +101,6 @@ export default function CreateOrderController(
                         return orderSum + orderItem.item.marginalPrice * orderItem.quantity;
                     }, 0);
                     vm.order.toPay = vm.order.sum;
-                    vm.calculateAlreadyPaid();
                     vm.calculateToPay();
                     break;
                 }
@@ -177,6 +176,10 @@ export default function CreateOrderController(
         });
 
     };
+
+    vm.selectText = ($event) => {
+        $event.target.select();
+    }
 
     vm.deleteOrder = (order) => {
         var confirm = $mdDialog.confirm()

@@ -69,6 +69,8 @@
     <Compile Include="EntityFramework\Infrastructure\IUnitOfWork.cs" />
     <Compile Include="EntityFramework\Infrastructure\UnitOfWork.cs" />
     <Compile Include="EntityFramework\ManicureContext.cs" />
+    <Compile Include="EntityFramework\Mapping\CategoriesConfiguration.cs" />
+    <Compile Include="EntityFramework\Mapping\CityConfiguration.cs" />
     <Compile Include="EntityFramework\Mapping\ClientConfiguration.cs" />
     <Compile Include="EntityFramework\Mapping\EntityConfiguration.cs" />
     <Compile Include="EntityFramework\Mapping\ItemConfiguration.cs" />
@@ -85,9 +87,9 @@
     <Compile Include="EntityFramework\Repositories\PurchasePlaceRepository.cs" />
     <Compile Include="EntityFramework\Repositories\PurchaseRepository.cs" />
     <Compile Include="EntityFramework\Repositories\Repository.cs" />
-    <Compile Include="Migrations\201608070827500_init.cs" />
-    <Compile Include="Migrations\201608070827500_init.Designer.cs">
-      <DependentUpon>201608070827500_init.cs</DependentUpon>
+    <Compile Include="Migrations\201610291529315_init.cs" />
+    <Compile Include="Migrations\201610291529315_init.Designer.cs">
+      <DependentUpon>201610291529315_init.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Migrations\DummyData.cs" />
@@ -108,8 +110,8 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201608070827500_init.resx">
-      <DependentUpon>201608070827500_init.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201610291529315_init.resx">
+      <DependentUpon>201610291529315_init.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -56,9 +56,15 @@ export default function ItemDetailController($state, $scope, $q, $stateParams,
     vm.checkName = (name) => {
         ItemService.checkName(name).then(itemId => {
             if (itemId) {
-                vm.sameNameItemId = itemId;
+                let confirm = $mdDialog.confirm()
+                    .title('Внимание')
+                    .textContent('Товар с таким именем уже есть. Перейти на него?')
+                    .ok('ОК')
+                    .cancel('Отменить');
+                $mdDialog.show(confirm).then(() => {
+                    $state.go('item', { itemId });
+                });
             }
-            console.log(itemId);
         })
     }
 
@@ -93,11 +99,30 @@ export default function ItemDetailController($state, $scope, $q, $stateParams,
         return _.round((vm.item.marginalPrice * 100 / vm.item.originalPrice) - 100);
     }
 
-    vm.calculateAndPasteMarginalPrice = () => {
-        if (vm.item.originalPrice) {
-            vm.item.marginalPrice = parseFloat((vm.item.originalPrice * 2).toFixed(2));
-        }
-    }
+    vm.saveAndDuplicate = () => {
+        var confirm = $mdDialog.prompt()
+            .title('Сколько сделать дубликатов?')
+            .placeholder('Количество')
+            .ok('ОК')
+            .cancel('Отменить');
+        $mdDialog.show(confirm).then((result) => {
+            let parsedResult = parseInt(result);
+            if (!isNaN(parsedResult)) {
+                $q.all(_.map(_.times(parsedResult), vm.saveItem))
+                    .then(() => {
+                        goBack();
+                    });
+            } else {
+                $mdDialog.show(
+                    $mdDialog.alert()
+                        .clickOutsideToClose(true)
+                        .title('Количество')
+                        .textContent('Надо ввести цифры')
+                        .ok('Окей')
+                );
+            }
+        });
+    };
 
     function isItemChanged() {
         return !_.isEqual(vm.item, vm.itemBefore);
@@ -154,6 +179,7 @@ export default function ItemDetailController($state, $scope, $q, $stateParams,
                     })
                 }
             }
+            return $q.when();
         })().then(() => {
             return ItemService.saveItem(vm.item);
         });

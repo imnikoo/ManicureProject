@@ -4,6 +4,7 @@ export default function ClientController(
     $stateParams,
     $mdDialog,
     $mdMedia,
+    $q,
     ClientService) {
     'ngInject';
 
@@ -32,7 +33,24 @@ export default function ClientController(
     }
 
     vm.saveClient = () => {
-        return ClientService.saveClient(vm.client);
+        return (() => {
+            if (!vm.client.city) {
+                var chosenCity = _.find(vm.cities, ['title', vm.searchCity]);
+                if (chosenCity) {
+                    vm.client.city = chosenCity;
+                } else {
+                    return ClientService.saveCity({
+                        title: vm.searchCity
+                    }).then((value) => {
+                        vm.client.city = value;
+                        vm.client.cityId = value.id;
+                    })
+                }
+            }
+            return $q.when();
+        })().then(() => {
+            return ClientService.saveClient(vm.client);
+        });
     }
 
     vm.checkAndWarn = ($event) => {
@@ -46,6 +64,23 @@ export default function ClientController(
 
     function isClientChanged() {
         return !_.isEqual(vm.client, vm.clientBefore);
+    }
+    vm.checkName = () => {
+        ClientService.checkName({
+            firstName: vm.client.firstName,
+            lastName: vm.client.lastName
+        }).then(clientId => {
+            if (clientId) {
+                let confirm = $mdDialog.confirm()
+                    .title('Внимание')
+                    .textContent('Клиент с таким именем уже есть. Перейти на него?')
+                    .ok('ОК')
+                    .cancel('Отменить');
+                $mdDialog.show(confirm).then(() => {
+                    $state.go('client', { clientId });
+                });
+            }
+        })
     }
 
     vm.showConfirm = function (ev) {
@@ -83,8 +118,8 @@ export default function ClientController(
 
     function createFilterFor(query) {
         var lowercaseQuery = angular.lowercase(query);
-        return function filterFn(category) {
-            return (vm.client.city.title.toLowerCase().indexOf(lowercaseQuery) === 0);
+        return function filterFn(city) {
+            return city.title.toLowerCase().indexOf(lowercaseQuery) === 0;
         };
     }
 

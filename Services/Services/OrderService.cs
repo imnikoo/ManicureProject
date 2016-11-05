@@ -24,9 +24,9 @@ namespace Services.Services
             if (!String.IsNullOrEmpty(filterText))
             {
                 predicates.Add(x =>
-                x.Client.FirstName.StartsWith(filterText)
-                || x.Client.LastName.StartsWith(filterText)
-                || x.Items.Any(orderItem => orderItem.Item.Title.StartsWith(filterText))
+                x.Client.FirstName.Contains(filterText)
+                || x.Client.LastName.Contains(filterText)
+                || x.Items.Any(orderItem => orderItem.Item.Title.Contains(filterText))
                 || x.AdditionalInformation.Contains(filterText));
             }
 

@@ -55,20 +55,23 @@
 	};
 
 	vm.performSearch = (query) => {
-		vm.promise = OrderService.getOrders(query).then(value => {
+		_.throttle(() => {
+			vm.promise = OrderService.getOrders(query).then(value => {
 			vm.orders = value.order;
 			vm.queryResult = {
 				'total': value.total,
 			};
 			vm.pageIsLoaded = true;
-		});
+			});
+		}, 500, { 'trailing': false })();
 	};
+		
 	vm.getOrderClass = (order) => {
-		if(order.state === 3) {
+		if(order.state === 2) {
 			return 'payed';
-		} else if(order.state === 2) {
+		} else if(order.state === 1) {
 			return 'pre-payed';
-		} else if(order.state === 4) {
+		} else if(order.state === 3) {
 			return 'closed';
 		}
 		return '';

@@ -30,6 +30,7 @@ export default class OrderService {
             return this.HttpService.post(route, city);
         }
     }
+   
 
     getOrders(query) {
         let correctQuery = _correctPages(query);
@@ -39,7 +40,6 @@ export default class OrderService {
                 return _$q.all(_.map(result.order, (order) => {
                     return _fillWithCities(order)
                         .then(_fillWithClient)
-                        .then(_fillWithItems)
                 })).then((transfromedOrders) => {
                     result.order = transfromedOrders;
                     return result;
@@ -52,7 +52,6 @@ export default class OrderService {
         return this.HttpService.get(prefix)
             .then(_fillWithCities)
             .then(_fillWithClient)
-            .then(_fillWithItems)
     }
 
     saveOrder(entity) {

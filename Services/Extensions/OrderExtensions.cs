@@ -1,6 +1,7 @@
 ﻿using Data.EntityFramework.Infrastructure;
 using ManicureDomain.DTOs;
 using ManicureDomain.Entities;
+using ManicureDomain.Entities.Enums;
 using Services.Services;
 using System.Linq;
 
@@ -11,6 +12,13 @@ namespace Services.Extensions
         public static void Update(this Order destination, OrderDTO source, IUnitOfWork uow)
         {
             destination.AdditionalInformation = source.AdditionalInformation;
+            if(source.State == OrderState.Closed || destination.State != OrderState.Closed)
+            {
+                foreach (var orderedItem in source.Items)
+                {
+                    uow.ItemRepository.GetByID(orderedItem.ItemId).Stock -= orderedItem.Quantity;
+                }
+            }
             destination.State = source.State;
             destination.AlreadyPaid = source.AlreadyPaid;
             destination.CityId = source.CityId;
@@ -27,6 +35,7 @@ namespace Services.Extensions
             source.Items.Where(x => x.Id == 0).ToList().ForEach(newOrderItem =>
             {
                 var toDomain = DTOService.ToEntity<OrderItemDTO, OrderItem>(newOrderItem);
+                toDomain.Item = null;
                 destination.Items.Add(toDomain);
             });
             source.Items.Where(x => x.Id != 0).ToList().ForEach(updatedOrderItem =>

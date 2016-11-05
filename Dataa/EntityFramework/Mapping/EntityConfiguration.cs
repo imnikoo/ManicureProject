@@ -13,7 +13,6 @@ namespace Dataa.EntityFramework.Mapping
         public EntityConfiguration()
         {
             Map(m => m.Requires("IsDeleted").HasValue(false)).Ignore(m => m.IsDeleted);
-
             HasKey(e => e.Id);
         }
     }

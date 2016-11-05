@@ -1,11 +1,13 @@
 ﻿using Data.EntityFramework.Infrastructure;
 using ManicureDomain.DTOs;
 using ManicureDomain.Entities;
+using ManicureDomain.Entities.Enums;
 using Services.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text.RegularExpressions;
 
 namespace Services.Services
 {
@@ -45,22 +47,28 @@ namespace Services.Services
         {
             List<Expression<Func<Item, bool>>> predicates = new List<Expression<Func<Item, bool>>>();
 
-            if (!String.IsNullOrEmpty(filterText))
-            {
-                predicates.Add(x =>
-                x.Category.Title.StartsWith(filterText)
-                || x.Title.StartsWith(filterText)
+            var items = uow.ItemRepository.Get().Where(x => Regex.IsMatch(x.Category.Title, filterText, RegexOptions.IgnoreCase) 
+                || Regex.IsMatch(x.Title, filterText, RegexOptions.IgnoreCase)
                 || x.MarginalPrice.ToString().Equals(filterText)
                 || x.OriginalPrice.ToString().Equals(filterText)
-                || x.Stock.ToString().StartsWith(filterText)
-                || x.AdditionalInformation.Contains(filterText));
+                || x.Stock.ToString().Equals(filterText)
+                || Regex.IsMatch(x.AdditionalInformation ?? String.Empty, filterText, RegexOptions.IgnoreCase)
+                );
+            var skipped = items.Skip(page * perPage).Take(perPage).Select(item => DTOService.ToDTO<Item, ItemDTO>(item)).ToList();
+            List<Expression<Func<Order, bool>>> orderedItemsPredicates = new List<Expression<Func<Order, bool>>>();
+            foreach (var item in skipped)
+            {
+                orderedItemsPredicates.Add(x => x.Items.Any(i => i.ItemId == item.Id));
+                var orders = uow.OrderRepository.Get(orderedItemsPredicates).Where(x=> x.State != OrderState.Closed).ToList();
+                item.OrdersOfItem  = orders.SelectMany(x => x.Items.Where(i => i.ItemId == item.Id))
+                    .Aggregate(0, (s, ordItem) => s + ordItem.Quantity);
+                orderedItemsPredicates.Clear();
             }
-
-            var items = uow.ItemRepository.Get(predicates);
+            
             var total = items.Count();
 
             return new Tuple<IEnumerable<ItemDTO>, int>(
-                items.Skip(page * perPage).Take(perPage).Select(item => DTOService.ToDTO<Item, ItemDTO>(item)),
+                skipped,
                 total);
         }
 

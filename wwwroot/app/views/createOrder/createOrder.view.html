@@ -18,16 +18,14 @@
                         <div class="table-container">
                             <table class="ordered-items-table">
                                 <thead>
-                                    <th style="">#</th>
-                                    <th>Товар</th>
+                                    <th style="display:flex; flex-direction: row;"><div style="padding-right: 8px;">№</div><div padding-left: 8px;>Товар</div></th>
                                     <th>Количество</th>
                                     <th>Цена (₴)</th>
                                     <th style="text-align: right">Сумма (₴)</th>
                                 </thead>
                                 <tbody>
                                     <tr ng-if="!orderedItem.removed" ng-repeat="orderedItem in order.items track by $index">
-                                        <td>{{$index + 1}}</td>
-                                        <td>{{orderedItem.item.title}}</td>
+                                        <td style="display:flex; flex-direction: row;"><div style="padding-right: 8px;">{{$index + 1}}</div><div  style="padding-left: 8px;">{{orderedItem.item.title}}</div></td>
                                         <td>{{orderedItem.quantity}}</td>
                                         <td>{{orderedItem.item.marginalPrice | currency:""}}</td>
                                         <td style="text-align: right">{{calculateSumOf(orderedItem) | currency:""}}</td>
@@ -44,7 +42,6 @@
                                             </md-button>
                                         </td>
                                         <td></td>
-                                        <td></td>
                                         <td class="sum-cell">Σ {{order.sum | currency:""}}</td>
                                     </tr>
                                 </tbody>
@@ -56,11 +53,11 @@
                             <form name="secondStageOrderForm">
                                 <md-input-container class="md-block">
                                     <label>Скидка</label>
-                                    <input name="discount" ng-model="order.discount" ng-keyup="calculateToPay()">
+                                    <input name="discount" ng-model="order.discount" ng-click="selectText($event)" ng-keyup="calculateToPay()">
                                 </md-input-container>
                                 <md-input-container class="md-block">
                                     <label>Оплачено</label>
-                                    <input name="alreadyPaid" ng-model="order.alreadyPaid" type="number" ng-keyup="calculateAlreadyPaid()">
+                                    <input name="alreadyPaid" ng-model="order.alreadyPaid" ng-click="selectText($event)" type="number" ng-keyup="calculateAlreadyPaid()">
                                 </md-input-container>
                                 <md-input-container class="md-block">
                                     <label>К оплате</label>
@@ -86,7 +83,7 @@
                             <input name="reciever" ng-model="order.reciever">
                         </md-input-container>
                         <md-autocomplete md-input-name="cityInput" flex="" required=""
-                        md-input-minlength="0" md-input-maxlength="18" 
+                            md-input-minlength="0" md-input-maxlength="18" 
                             md-selected-item="order.city"
                             md-search-text="searchCity" 
                             md-items="city in querySearch(searchCity)" 

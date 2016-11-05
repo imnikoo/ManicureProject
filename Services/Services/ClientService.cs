@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text.RegularExpressions;
 
 namespace Services.Services
 {
@@ -41,22 +42,35 @@ namespace Services.Services
             return DTOService.ToDTO<Client, ClientDTO>(_Client);
         }
 
-        public Tuple<IEnumerable<ClientDTO>, int> Get(int page, int perPage, string filterText)
+        public int? CheckName(string firstName, string lastName)
         {
             List<Expression<Func<Client, bool>>> predicates = new List<Expression<Func<Client, bool>>>();
 
-            if (!String.IsNullOrEmpty(filterText))
+            if (!String.IsNullOrEmpty(firstName) && !String.IsNullOrEmpty(lastName))
             {
-                predicates.Add(x =>
-                x.City.Title.StartsWith(filterText)
-                || x.FirstName.StartsWith(filterText)
-                || x.LastName.StartsWith(filterText)
-                || x.PhoneNumber.StartsWith(filterText)
-                || x.Source.StartsWith(filterText)
-                || x.AdditionalInformation.Contains(filterText));
+                    predicates.Add(client =>
+                        (client.FirstName.Contains(firstName) && client.LastName.Contains(lastName)
+                    ));
+                var clients = uow.ClientRepository.Get(predicates).ToList();
+                if (clients.Any())
+                {
+                    return clients.First().Id;
+                }
             }
+            return null;
+        }
 
-            var clients = uow.ClientRepository.Get(predicates);
+        public Tuple<IEnumerable<ClientDTO>, int> Get(int page, int perPage, string filterText)
+        {
+            List<Expression<Func<Client, bool>>> predicates = new List<Expression<Func<Client, bool>>>();
+            
+            var clients = uow.ClientRepository.Get().Where(x => Regex.IsMatch(x.City.Title, filterText, RegexOptions.IgnoreCase)
+            || Regex.IsMatch(x.City.Title, filterText, RegexOptions.IgnoreCase)
+            || Regex.IsMatch(x.FirstName ?? String.Empty, filterText, RegexOptions.IgnoreCase)
+            || Regex.IsMatch(x.LastName ?? String.Empty, filterText, RegexOptions.IgnoreCase)
+            || Regex.IsMatch(x.PhoneNumber ?? String.Empty, filterText, RegexOptions.IgnoreCase)
+            || Regex.IsMatch(x.Source ?? String.Empty, filterText, RegexOptions.IgnoreCase)
+            || Regex.IsMatch(x.AdditionalInformation ?? String.Empty, filterText, RegexOptions.IgnoreCase));
             var total = clients.Count();
 
             return new Tuple<IEnumerable<ClientDTO>, int>(

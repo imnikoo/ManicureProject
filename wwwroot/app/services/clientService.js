@@ -1,5 +1,6 @@
 const CLIENT_URL = 'clients/';
-const CITIES_URL = 'cities/'
+const CITIES_URL = 'cities/';
+const CHECK_NAME_URL = 'checkName/';
 
 let _ClientService;
 
@@ -21,6 +22,10 @@ export default class ClientService {
         var prefix = CLIENT_URL + 'query/';
         return this.HttpService.post(prefix, correctQuery);
     }
+    checkName(firstLastNameObject) {
+        var route = CLIENT_URL + CHECK_NAME_URL;
+        return this.HttpService.post(route, firstLastNameObject);
+    }
 
     getClient(id) {
         var prefix = CLIENT_URL + id;
@@ -36,6 +41,16 @@ export default class ClientService {
         else {
             var prefix = CLIENT_URL;
             return this.HttpService.post(prefix, entity);
+        }
+    }
+    saveCity(city) {
+        this.CacheService.clearCache(CITIES_URL);
+        if (city.id !== undefined) {
+            var route = CITIES_URL + city.id;
+            return this.HttpService.put(route, city);
+        } else {
+            var route = CITIES_URL + city.id;
+            return this.HttpService.post(route, city);
         }
     }
 

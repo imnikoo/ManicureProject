@@ -9,6 +9,7 @@ namespace ManicureDomain.DTOs
         public double OriginalPrice { get; set; }
         public double MarginalPrice { get; set; }
         public string AdditionalInformation { get; set; }
+        public int OrdersOfItem { get; set; }
 
         public int CategoryId { get; set; }
 

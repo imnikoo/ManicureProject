@@ -18,7 +18,7 @@ let getFromCache = cond([
    [constant(true),           addHttpRequest]
 ]);
 
-export default class сacheService {
+export default class cacheService {
    constructor(HttpService, $q) {
       'ngInject';
       _HttpService = HttpService;

@@ -2,6 +2,10 @@
 using ManicureDomain.Abstract;
 using ManicureDomain.Entities;
 using System.Data.Entity;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace Dataa.EntityFramework.Repositories
 {

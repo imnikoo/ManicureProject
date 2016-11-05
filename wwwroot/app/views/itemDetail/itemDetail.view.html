@@ -34,7 +34,7 @@
 						</md-input-container>
 						<md-input-container class="md-block">
 							<label>Входящая цена (₴)</label>
-							<input required="" ng-keyup="calculateAndPasteMarginalPrice()" name="originalPrice" type=number ng-model="item.originalPrice">
+							<input required="" name="originalPrice" type=number ng-model="item.originalPrice">
 							<div ng-messages="itemForm.originalPrice.$error">
 								<div ng-message="required">
 									Нужно ввести <b>цену</b>
@@ -56,6 +56,9 @@
 						</md-input-container>
 						<md-button class="md-primary md-raised" ng-disabled="!itemForm.$valid" ng-click="saveItemAndBack()">
 							Сохранить и выйти
+						</md-button>
+						<md-button class="md-primary md-raised" ng-disabled="!itemForm.$valid" ng-click="saveAndDuplicate()">
+							Сохранить и дублировать
 						</md-button>
 						<md-button class="md-primary md-raised" ng-click="checkAndWarn($event)">
 							Назад

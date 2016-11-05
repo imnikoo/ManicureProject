@@ -39,6 +39,9 @@ namespace Data.EntityFramework
             modelBuilder.Configurations.Add(new OrderConfiguration());
             modelBuilder.Configurations.Add(new OrderItemConfiguration());
             modelBuilder.Configurations.Add(new PurchaseConfiguration());
+            modelBuilder.Configurations.Add(new PurchasePlaceConfiguration());
+            modelBuilder.Configurations.Add(new CategoriesConfiguration());
+            modelBuilder.Configurations.Add(new CityConfiguration());
 
             base.OnModelCreating(modelBuilder);
         }

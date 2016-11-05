@@ -23,7 +23,7 @@
                 <tbody md-body>
                     <tr md-row md-on-select="select" md-on-deselect="deselect" md-select="client" md-auto-select="options.autoSelect" ng-repeat="client in clients | orderBy: query.order | limitTo: query.limit">
                         <td md-cell>{{client.id}}</td>
-                        <td md-cell ui-sref="client({ clientId : {{client.id}}})">{{client.firstName}} {{client.lastName}}</td>
+                        <td md-cell ui-sref="client({ clientId : {{client.id}}})">{{client.lastName}} {{client.firstName}}</td>
                         <td md-cell>{{client.phoneNumber}}</td>
                         <td md-cell>{{client.city.title}}</td>
                         <td md-cell>{{client.source}}</td>

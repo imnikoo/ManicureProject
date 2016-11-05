@@ -1,4 +1,4 @@
-﻿export default function ItemsController($scope, $state, $stateParams, $mdDialog, $mdMedia, ItemService) {
+﻿export default function ItemsController($rootScope, $scope, $state, $stateParams, $mdDialog, $mdMedia, ItemService) {
 	'ngInject';
 	var vm = $scope;
 	vm.pageIsLoaded = false;
@@ -6,6 +6,7 @@
 	vm.selectedItems = [];
 	vm.itemCount = $stateParams.order ? $stateParams.order.items : [];
 	vm.isOrderCase = $stateParams.isOrderCase ? true : false;
+	
 
     vm.options = $stateParams.options ? $stateParams.options : {
         autoSelect: false,
@@ -19,7 +20,7 @@
         order: '-id',
         limit: 10,
 		page: $stateParams.page ? $stateParams.page : 1,
-		filterText: ''
+		filterText: $rootScope.prevState == 'item' ? $rootScope.searchText : ''
     };
 
 	vm.deselect = (item) => {
@@ -36,6 +37,7 @@
 		var confirm = $mdDialog.prompt()
 			.title('Выбор количества товара')
 			.placeholder('Количество')
+			.initialValue('1')
 			.ok('ОК')
 			.cancel('Отменить');
 		$mdDialog.show(confirm).then((result) => {
@@ -57,6 +59,11 @@
 						.ok('Окей.')
 				);
 			}
+		})
+		.catch(() => { 
+			vm.selectedItems = _.filter(vm.selectedItems, (selectedItem) => {
+					return selectedItem.id !== item.id;
+				});
 		});
 	};
 
@@ -72,11 +79,14 @@
 		vm.performSearch(query);
 	};
 
-	vm.performSearch = (query) => {
-		vm.promise = ItemService.getItems(query).then(value => {
-			vm.items = value.item;
+	vm.performSearch = (query, isSearchFilter) => {
+		if(isSearchFilter) {
+			query.page = 1;
+		}
+		vm.promise = ItemService.getItems(query).then(queryResult => {
+			vm.items = queryResult.item;
 			vm.queryResult = {
-				'total': value.total,
+				'total': queryResult.total,
 			};
 			vm.pageIsLoaded = true;
 		}).then(() => {
@@ -86,8 +96,8 @@
 						vm.selectedItems.push(item);
 					}
 				});
-			}
-		});;
+			}	
+		});
 		return vm.promise;
 	};
 

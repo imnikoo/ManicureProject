@@ -4,7 +4,7 @@ const CATEGORIES_URL = 'categories/'
 const PLACES_URL = 'PurchasePlaces/'
 const CHECK_NAME_URL = 'CheckName/';
 
-let _ItemService;
+let _ItemService, _OrderService;
 
 export default class ItemService {
     constructor(HttpService, CacheService, $q) {
@@ -57,7 +57,9 @@ export default class ItemService {
     }
 
     getCategories() {
-        return this.CacheService.get(CATEGORIES_URL);
+        return this.CacheService.get(CATEGORIES_URL).then(value => {
+            return value;
+        });
     }
 
     saveItem(item) {
@@ -110,7 +112,7 @@ function _updateBackCategories(item) {
 
 function _transform(item) {
     let newItem = _fillWithCategories(item);
-    newItem - _fillWithPurchasePlaces(newItem);
+    newItem = _fillWithPurchasePlaces(newItem);
     return _fillWithAmountOfOrderedByUser(newItem);
 }
 
@@ -134,9 +136,6 @@ function _fillWithCategories(item) {
     return item;
 }
 
-function _fillWithAmountOfOrderedByCustomers(item) {
-    //TODO: implement after OrderService is implements
-}
 
 function _fillWithAmountOfOrderedByUser(item) {
     if (item.purchases.length) {

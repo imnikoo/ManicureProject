@@ -68,7 +68,7 @@
 
 #tableCard {
     order: 0;
-    flex-grow: 3;
+    flex-grow: 2;
 }
 
 .order-buttons-container {
@@ -90,7 +90,6 @@
 }
 
 .ordered-items-table {
-    border:  1px rgba(0, 0, 0, 0.12) solid; 
     width: 100%;
 }
 
@@ -103,10 +102,8 @@
 }
 
 .payed {
-    background-color: rgba(green, 0.7);
 }
 .pre-payed {
-    background-color: orange;
 }
 .closed {
     background-color: lightgrey;

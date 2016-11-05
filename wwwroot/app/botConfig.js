@@ -21,12 +21,10 @@ export default function _config($stateProvider, $urlRouterProvider,$locationProv
         enabled: true,
         requireBase: false
     });
+    
 
     $stateProvider
-        .state('home', {
-            url: '/home',
-            template: homeTemplate
-        })
+    
         .state('clients', {
             url: '/clients',
             template: clientsTemplate,
@@ -83,7 +81,7 @@ export default function _config($stateProvider, $urlRouterProvider,$locationProv
                 order: null
             }
         });
-    $urlRouterProvider.otherwise('home');
+    $urlRouterProvider.otherwise('items');
         
     $mdIconProvider
         .icon('call:phone', 'app/icons/ic_view_headline_black_24px.svg');

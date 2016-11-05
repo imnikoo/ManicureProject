@@ -13,8 +13,8 @@ namespace Dataa.Migrations
                     {
                         Id = c.Int(nullable: false, identity: true),
                         Title = c.String(),
-                        IsDeleted = c.Boolean(nullable: false),
                         CreatedAt = c.DateTime(),
+                        IsDeleted = c.Boolean(nullable: false),
                     })
                 .PrimaryKey(t => t.Id);
             
@@ -24,8 +24,8 @@ namespace Dataa.Migrations
                     {
                         Id = c.Int(nullable: false, identity: true),
                         Title = c.String(),
-                        IsDeleted = c.Boolean(nullable: false),
                         CreatedAt = c.DateTime(),
+                        IsDeleted = c.Boolean(nullable: false),
                     })
                 .PrimaryKey(t => t.Id);
             
@@ -136,8 +136,8 @@ namespace Dataa.Migrations
                     {
                         Id = c.Int(nullable: false, identity: true),
                         Title = c.String(),
-                        IsDeleted = c.Boolean(nullable: false),
                         CreatedAt = c.DateTime(),
+                        IsDeleted = c.Boolean(nullable: false),
                     })
                 .PrimaryKey(t => t.Id);
             

@@ -63,6 +63,16 @@ namespace ManicureProject.Controllers
             var addedClient = _service.Add(newClient);
             return Json(addedClient, PROJECT_SERIALIZER_SETTINGS);
         }
+        [HttpPost]
+        [Route("checkName")]
+        public IHttpActionResult CheckName([FromBody]ClientNameModel nameModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return Json(ModelState.Errors(), PROJECT_SERIALIZER_SETTINGS);
+            }
+            return Json(_service.CheckName(nameModel.FirstName, nameModel.LastName), PROJECT_SERIALIZER_SETTINGS);
+        }
 
         [HttpPut]
         [Route("{id}")]

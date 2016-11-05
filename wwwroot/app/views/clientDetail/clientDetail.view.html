@@ -17,27 +17,30 @@
                     </md-input-container>
                     <md-input-container class="md-block">
                         <label>Фамилия</label>
-                        <input required name="lastName" ng-model="client.lastName">
+                        <input ng-blur="checkName()" required name="lastName" ng-model="client.lastName">
                         <div ng-messages="clientForm.lastName.$error">
                             <div ng-message="required">
                                 Введи <b>фамилию клиента</b>
                             </div>
                         </div>
                     </md-input-container>
-                    <label class="">Город</label>
-                    <md-autocomplete md-selected-item="client.city" md-search-text="searchCity" md-items="city in querySearch(searchCity)" md-item-text="city.title"
-                        md-min-length="0" placeholder="">
-                        <md-item-template>
-                            <span md-highlight-text="searchCity" md-highlight-flags="^i">{{city.title}}</span>
-                        </md-item-template>
-                        <md-not-found>
-                            Города "{{searchCategory}}" нет еще.
-                            <a ng-click="">Клик, чтобы создать!</a>
-                        </md-not-found>
-                    </md-autocomplete>
+                    <md-autocomplete md-input-name="cityInput" flex="" required=""
+                            md-input-minlength="0" md-input-maxlength="18" 
+                            md-selected-item="client.city"
+                            md-search-text="searchCity" 
+                            md-items="city in querySearch(searchCity)" 
+                            md-item-text="city.title"
+                            md-floating-label="Город">
+                            <md-item-template>
+                                <span md-highlight-text="searchCity">{{city.title}}</span>
+                            </md-item-template>
+                            <div ng-messages="clientForm.cityInput.$error" ng-if="clientForm.cityInput.$touched">
+                                <div ng-message="required">Выбери <b>город</b></div>
+                            </div>
+                        </md-autocomplete>
                     <md-input-container class="md-block">
                         <label>Телефон</label>
-                        <input required name="phoneNumber" ng-model="client.phoneNumber" ng-pattern="/\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/">
+                        <input required name="phoneNumber" ng-model="client.phoneNumber">
                         <div class="hint" ng-show="showHints">+3(###)###-##-##</div>
                         <div ng-messages="clientForm.phoneNumber.$error" ng-hide="showHints">
                             <div ng-message="pattern">########## - Please enter a valid phone number.</div>
